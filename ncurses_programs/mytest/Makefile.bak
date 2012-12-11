@@ -1,0 +1,17 @@
+TARGET=mytest
+OBJS=mytest.o
+INC=/usr/keygoe/inc
+LIBPATH=/usr/keygoe/dll
+
+%.o:%.cpp
+	g++ -fPIC -c -g -I$(INC) -I. $< -o $@ 
+
+$(TARGET):$(OBJS)
+	g++  $(OBJS) -L$(LIBPATH) -lncurses -lform -o $(TARGET)
+
+.PHONY:clean
+
+clean:
+	rm *.o $(TARGET)
+	
+	

@@ -1,0 +1,85 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: LoadAging - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSPF3.tmp" with contents
+[
+/nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /FR"Debug/" /Fp"Debug/LoadAging.pch" /Yu"stdafx.h" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"D:\mingyangworkspace\LoadAging\LoadAging_MemDraw\LoadAging\LoadAgingDlg.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSPF3.tmp" 
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSPF4.tmp" with contents
+[
+/nologo /subsystem:windows /incremental:yes /pdb:"Debug/LoadAging.pdb" /debug /machine:I386 /out:"Debug/LoadAging.exe" /pdbtype:sept 
+.\Debug\BCMenu.obj
+.\Debug\BtnST.obj
+.\Debug\hangePasswordDlg.obj
+.\Debug\ImportParamDlg.obj
+.\Debug\Layer1Dlg.obj
+.\Debug\Layer2Dlg.obj
+.\Debug\Layer3Dlg.obj
+.\Debug\Layer4Dlg.obj
+.\Debug\Layer5Dlg.obj
+.\Debug\Layer6Dlg.obj
+.\Debug\LED.obj
+.\Debug\LoadAging.obj
+.\Debug\LoadAging_Tran.obj
+.\Debug\LoadAgingDlg.obj
+.\Debug\LogFile.obj
+.\Debug\LongDlg.obj
+.\Debug\MyLog.obj
+.\Debug\NT77.obj
+.\Debug\ParamEditDlg.obj
+.\Debug\SerialPort.obj
+.\Debug\StdAfx.obj
+.\Debug\SysConfigDlg.obj
+.\Debug\TabSheet.obj
+.\Debug\LoadAging.res
+.\NT77.lib
+]
+Creating command line "link.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSPF4.tmp"
+<h3>Output Window</h3>
+Compiling...
+LoadAgingDlg.cpp
+Linking...
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSPF5.tmp" with contents
+[
+/nologo /o"Debug/LoadAging.bsc" 
+.\Debug\StdAfx.sbr
+.\Debug\BCMenu.sbr
+.\Debug\BtnST.sbr
+.\Debug\hangePasswordDlg.sbr
+.\Debug\ImportParamDlg.sbr
+.\Debug\Layer1Dlg.sbr
+.\Debug\Layer2Dlg.sbr
+.\Debug\Layer3Dlg.sbr
+.\Debug\Layer4Dlg.sbr
+.\Debug\Layer5Dlg.sbr
+.\Debug\Layer6Dlg.sbr
+.\Debug\LED.sbr
+.\Debug\LoadAging.sbr
+.\Debug\LoadAging_Tran.sbr
+.\Debug\LoadAgingDlg.sbr
+.\Debug\LogFile.sbr
+.\Debug\LongDlg.sbr
+.\Debug\MyLog.sbr
+.\Debug\NT77.sbr
+.\Debug\ParamEditDlg.sbr
+.\Debug\SerialPort.sbr
+.\Debug\SysConfigDlg.sbr
+.\Debug\TabSheet.sbr]
+Creating command line "bscmake.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSPF5.tmp"
+Creating browse info file...
+<h3>Output Window</h3>
+
+
+
+<h3>Results</h3>
+LoadAging.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

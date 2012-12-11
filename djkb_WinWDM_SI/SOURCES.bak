@@ -1,0 +1,10 @@
+TARGETNAME=DJDDBWDM
+TARGETTYPE=DRIVER
+DRIVERTYPE=WDM
+TARGETPATH=LIB
+LINKER_FLAGS=-MAP:DNMSI
+
+INCLUDES=$(BASEDIR)\inc;\
+         $(BASEDIR)\inc\ddk;\     
+             
+SOURCES = ddb_main_windows.c ddb_msg_ctrl.c ddb_cmd_dispatch.c\

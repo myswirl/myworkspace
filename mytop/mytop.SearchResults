@@ -1,0 +1,5 @@
+---- machine_init Matches (4 in 3 files) ----
+Machine.h: * the statics struct is filled in by machine_init
+Main.c:int machine_init(struct statics * statics);
+Main.c:	 machine_init(&stat);
+M_linux.c:machine_init(statics)

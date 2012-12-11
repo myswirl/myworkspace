@@ -1,0 +1,17 @@
+工程djddb_WinWDM_Linux_SI为东进DN160A板卡PCI驱动，适用于Windows和Linux。
+
+1.文件名中有"_windows"的文件为Windows驱动专用；
+2.文件名中有"_linux"的文件为Linux驱动专用；
+3.其他文件为Windows和Linux共用，文件中的少量不兼容代码通过宏"LINUX_SYSTEM"区分编译；
+
+------------------------Windows WDM驱动说明------------------------------
+1 ddb_main_windows.h和ddb_main_windows.c只为windows使用；
+2 SOURCES和MAKEFILE用于Windows驱动的编译；
+3 编译命令:>build -cZw；
+
+------------------------Linux 驱动说明------------------------------
+1 ddb_main_linux.h和ddb_main_linux.c和ddb_2040_linux.c和ddb_2040_linux.h只为Linux使用；
+2 makefile_linux为Linux的编译文件，注意需要将此文件名改为Makefile；
+3 load_djddb和unload_djddb为Linux驱动加载和卸载文件；
+3 编译命令# make；
+	

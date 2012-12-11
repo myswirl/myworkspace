@@ -1,0 +1,16 @@
+#!bin/sh
+module="djddb"
+device="djddb"
+mode="664"
+
+# 装载模块
+/sbin/insmod ./$module.ko $* || exit 1 
+
+# 删除原有节点
+rm -f /dev/${device}
+
+#从/proc/devices中获取主设备号，并在/dev目录中创建设备文件
+major=`cat /proc/devices | awk "\\$2==\"$module\" {print \\$1}"`
+
+mknod /dev/${device} c $major 0
+chmod $mode  /dev/${device}

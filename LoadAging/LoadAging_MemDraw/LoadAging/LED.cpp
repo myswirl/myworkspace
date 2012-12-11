@@ -1,0 +1,278 @@
+///////////////类cpp文件
+// LED.cpp : implementation file
+//
+#include "stdafx.h"
+//#include "colortext.h"
+#include "LED.h"
+	
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+
+COLORREF g_ColorSelect=RGB(0xff,0xec,0x8b);		//已选中LED, 黄色，
+COLORREF g_ColorNotSelect=RGB(0xc5,0xc1,0xaa);	//未选中LED, 灰色
+COLORREF g_ColorGreen=RGB(0,255,0);				//绿色，校验通过的	
+COLORREF g_ColorRed=RGB(255,0,0);				//红色，出错
+COLORREF g_ColorBlue=RGB(0x9a, 0xc0, 0xcd);		//淡蓝色,对话框背景色,按钮背景色
+/////////////////////////////////////////////////////////////////////////////
+// CLED
+
+CLED::CLED()
+{	
+	m_crBK=g_ColorBlue;//RGB(240,240,240);//RGB(212,208,200);//RGB(192, 192, 192);	//指示灯矩形框背景色
+	m_crOnFG=RGB(0,255,0);		//绿色	
+	m_crOffFG=RGB(255,0,0);		//红色
+	m_iType=0;	
+	m_bOn=true;	
+	m_brOnFG=new CBrush(m_crOnFG);	
+	m_brOffFG=new CBrush(m_crOffFG);	
+	m_sOnString="on";	
+	m_sOffString="off";	
+	m_bTextOn=true;	
+
+}
+
+
+
+CLED::~CLED()
+{	
+	delete m_brOffFG;	
+	delete m_brOnFG;	
+}
+
+BEGIN_MESSAGE_MAP(CLED, CStatic)
+
+//{{AFX_MSG_MAP(CLED)
+ON_WM_CREATE()
+ON_WM_PAINT()
+ON_WM_DESTROY()
+ON_WM_SIZE()
+//}}AFX_MSG_MAP
+
+END_MESSAGE_MAP()
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+// CLED message handlers
+
+int CLED::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{	
+	if (CStatic::OnCreate(lpCreateStruct) == -1)		
+		return -1;	
+	// TODO: Add your specialized creation code here	
+	return 0;	
+}
+
+
+
+void CLED::OnPaint()
+{	
+	CPaintDC dc(this); // device context for painting	
+	// TODO: Add your message handler code here	
+	DrawFigure();	
+	// Do not call CStatic::OnPaint() for painting messages	
+}
+
+
+
+void CLED::OnDestroy()
+{	
+	CStatic::OnDestroy();	
+	// TODO: Add your message handler code here	
+}
+
+
+
+void CLED::SetOnFgColor(COLORREF C)
+{
+	m_brOnFG->DeleteObject();	
+	m_crOnFG=C;	
+	m_brOnFG->CreateSolidBrush(m_crOnFG);	
+	OnPaint();	
+}
+
+COLORREF CLED::GetOnFgColor()
+{	
+	return  m_crOnFG;	
+}
+
+void CLED::SetOffFgColor(COLORREF C)
+{	
+	m_brOffFG->DeleteObject();	
+	m_crOffFG=C;	
+	m_brOffFG->CreateSolidBrush(m_crOffFG);	
+	OnPaint();	
+}
+
+COLORREF CLED::GetOffFgColor()
+{	
+	return m_crOffFG;	
+}
+
+void CLED::SetType(int type)
+{	
+	if (type<0||type>2)		
+	{		
+		return;		
+	}	
+	m_iType=type;	
+	OnPaint();	
+}
+
+int CLED::GetType()
+{	
+	return m_iType;	
+}
+
+
+
+void CLED::DrawFigure()
+{	
+	//CClientDC pdc(this);
+	CBrush b;	
+// 	CRect r;	
+// 	GetClientRect(r);	
+	
+	
+	b.CreateSolidBrush(m_crBK);	
+	memBitmap.SetBitmapDimension(rect.right,rect.bottom);
+    pOldBmp = memDC.SelectObject(&memBitmap);
+	
+	memDC.SelectObject(&b);	
+	memDC.FillRect(rect,&b);	
+	memDC.SetBkMode(TRANSPARENT);	
+	if (m_bOn==true)		
+	{		
+		CPen pen(0,0,m_crOnFG);		
+		memDC.SelectObject(&pen);		
+		memDC.SelectObject(m_brOnFG);		
+	}else		
+	{		
+		CPen pen(0,0,m_crOffFG);		
+		memDC.SelectObject(&pen);		
+		memDC.SelectObject(m_brOffFG);		
+	}
+		
+	if (m_iType==0)//circle		
+	{		
+		CRect r1;		
+		if (rect.Width()>rect.Height())			
+		{			
+			r1.left=rect.left+(rect.Width()-rect.Height())/2.0;			
+			r1.right=rect.right-(rect.Width()-rect.Height())/2.0;			
+			r1.top=rect.top;			
+			r1.bottom=rect.bottom;			
+		}else			
+		{			
+			r1.left=rect.left;		
+			r1.right=rect.right;			
+			r1.top=rect.top+(rect.Height()-rect.Width())/2.0;			
+			r1.bottom=rect.bottom-(rect.Height()-rect.Width())/2.0;			
+		}		
+		memDC.Ellipse(r1);		
+	}
+	
+	if (m_iType==1)//squre		
+	{		
+		memDC.Rectangle(rect);		
+	}
+	
+	if (m_iType==2)//ellipse		
+	{		
+		memDC.Ellipse(rect);		
+	}
+	
+	if (!m_bTextOn)		
+		return;
+	
+	if(m_bOn)		
+		memDC.TextOut(rect.CenterPoint().x-m_sOnString.GetLength()*3.5,rect.CenterPoint().y-10,m_sOnString,m_sOnString.GetLength());
+	else		
+		memDC.TextOut(rect.CenterPoint().x-m_sOffString.GetLength()*3.5,rect.CenterPoint().y-10,m_sOffString,m_sOffString.GetLength());
+	
+}
+
+
+
+void CLED::SetOnOff(bool val)
+{
+	m_bOn=val;	
+	OnPaint();	
+}
+
+BOOL CLED::GetOnOff()
+{	
+	return m_bOn;	
+}
+
+
+
+void CLED::OnSize(UINT nType, int cx, int cy)
+{	
+	CStatic::OnSize(nType, cx, cy);	
+	OnPaint();
+}
+
+
+
+void CLED::SetBKColor(COLORREF C)
+{	
+	m_crBK=C;
+	OnPaint();	
+}
+
+COLORREF CLED::GetBKColor()
+{
+	return m_crBK;	
+}
+
+
+
+void CLED::SetOnText(CString str)
+{	
+	m_sOnString=str;	
+	OnPaint();	
+}
+
+CString CLED::GetOnText()
+{	
+	return m_sOnString;
+}
+
+void CLED::SetOffText(CString str)
+
+{
+	
+	m_sOffString=str;
+	
+	OnPaint();
+	
+}
+
+CString CLED::GOffText()
+
+{
+	
+	return m_sOffString;
+	
+}
+
+void CLED::SetTextOnOff(bool val)
+
+{
+	
+	m_bTextOn=val;
+	
+	OnPaint();
+	
+	
+	
+}
+
+bool CLED::GetTextOnOff()
+{	
+	return m_bTextOn;	
+}
