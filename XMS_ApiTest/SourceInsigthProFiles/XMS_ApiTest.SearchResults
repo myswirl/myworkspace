@@ -1,0 +1,10 @@
+---- Test Matches (9 in 4 files) ----
+LogFile.cpp (d:\mingyangworkspace\xms_apitest):char			g_LogFileName[MAX_LOGFILEPATH_LEN]="ApiTestLog";	//追加日志文件名，用户在这里定义自己的日志文件名
+Main.cpp (d:\mingyangworkspace\xms_apitest):#include "XMS_ApiTest_Sub.h"
+Main.cpp (d:\mingyangworkspace\xms_apitest):	ui = glade_xml_new( "xms_apitest.glade", NULL, NULL );  // 创建GladeXML对象
+Main.cpp (d:\mingyangworkspace\xms_apitest):	sprintf( logMsg, "Debug, Test Log Message .");
+XMS_ApiTest_Sub.cpp (d:\mingyangworkspace\xms_apitest):#include "XMS_ApiTest_Sub.h"
+XMS_ApiTest_Sub.cpp (d:\mingyangworkspace\xms_apitest):char					cfg_IniName[] = "./XMS_ApiTest.ini";
+XMS_ApiTest_Sub.cpp (d:\mingyangworkspace\xms_apitest):	//读取配置文件XMS_ApiTest.ini
+XMS_ApiTest_Sub.h (d:\mingyangworkspace\xms_apitest):#ifndef _XMS_APITEST_SUB_H_
+XMS_ApiTest_Sub.h (d:\mingyangworkspace\xms_apitest):#define _XMS_APITEST_SUB_H_

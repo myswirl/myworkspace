@@ -1,0 +1,11 @@
+#!/bin/sh
+folder=/home
+#-e 文件已经存在
+#-f 文件是普通文件
+#-s 文件大小不为零
+#-d 文件是一个目录
+#-r 文件对当前用户可以读取
+#-w 文件对当前用户可以写入
+#-x 文件对当前用户可以执行
+[ -r "$folder" ] && echo "Can read $folder"
+[ -f "$folder" ] || echo "this is not file"

@@ -1,0 +1,1 @@
+mount -t cifs -o iocharset=cp936,username=administrator,quid=root,gid=root,rw //192.168.10.147/mingyangworkspace /mnt/mingyangworkspace

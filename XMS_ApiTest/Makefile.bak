@@ -1,0 +1,15 @@
+TARGET=apitest
+INC=../../inc
+LIBPATH=../../dll
+CASPATH=../CAS_Common_Code
+ANAPATH=../Analog_Common_Code
+SRCS=main.cpp LogFile.cpp cini.cpp tools.cpp XMS_ApiTest_Sub.cpp CAS_Common_Cfg.cpp Analog_Common_Code.cpp
+OBJS=main
+
+$(TARGET):
+	g++ -o $(TARGET) $(SRCS) -I$(INC) -L$(LIBPATH) -lDJITPCom -lDJAcsAPI `pkg-config --cflags --libs glib-2.0 gtk+-2.0 libglade-2.0`
+
+clean:
+	rm -f *.o
+	rm -f $(TARGET)
+	

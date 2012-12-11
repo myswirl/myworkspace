@@ -1,0 +1,10 @@
+#!/bin/sh
+#"$#"：传入脚本的命令行参数个数
+#"$*"：所有命令行参数值，参数值之间留有空格
+#"$0"：命令本身
+#"$1"：第一个命令行参数
+echo "number of vars:"$#
+echo "values of vars:"$*
+echo "command name is:"$0
+echo "value of var1:"$1
+echo "value of var2:"$2

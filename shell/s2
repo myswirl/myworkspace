@@ -1,0 +1,3 @@
+#!/bin/sh
+num=2
+echo "the value is ${num}nd"

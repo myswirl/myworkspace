@@ -1,0 +1,5 @@
+#!/bin/sh
+for day in Sun Mon Tue Wed Thu Fir Sat 
+do
+	echo $day
+done

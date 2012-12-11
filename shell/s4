@@ -1,0 +1,10 @@
+#!/bin/sh
+hello="var1"
+echo $hello
+function func1
+{
+	local hello="var2"
+	echo $hello
+}
+func1
+echo $hello

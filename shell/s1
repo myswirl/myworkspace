@@ -1,0 +1,5 @@
+#!/bin/sh
+#在shell编程中所有的变量都由字符串组成，并不需要预先声明。
+a="hello"
+echo "a is:"
+echo $a

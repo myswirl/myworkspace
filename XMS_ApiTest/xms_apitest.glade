@@ -1,0 +1,260 @@
+<?xml version="1.0"?>
+<glade-interface>
+<!-- interface-requires gtk+ 2.6 -->
+<!-- interface-naming-policy toplevel-contextual -->
+  <widget class="GtkDialog" id="main_dialog">
+    <property name="visible">True</property>
+    <property name="title" translatable="yes">DONJIN Keygoe Demo: XMS_ApiTest </property>
+    <property name="type_hint">dialog</property>
+    <child internal-child="vbox">
+      <widget class="GtkVBox" id="dialog-vbox1">
+        <property name="visible">True</property>
+        <child>
+          <widget class="GtkFixed" id="fixed1">
+            <property name="visible">True</property>
+            <child>
+              <widget class="GtkTextView" id="textview_devlist">
+                <property name="width_request">0</property>
+                <property name="height_request">0</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+              </widget>
+            </child>
+            <child>
+              <widget class="GtkTextView" id="textview_devopened">
+                <property name="width_request">184</property>
+                <property name="height_request">144</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+              </widget>
+              <packing>
+                <property name="x">8</property>
+                <property name="y">280</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkLabel" id="label1">
+                <property name="width_request">88</property>
+                <property name="height_request">24</property>
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Device Type:</property>
+              </widget>
+              <packing>
+                <property name="y">8</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkLabel" id="label2">
+                <property name="width_request">96</property>
+                <property name="height_request">16</property>
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Open Device:</property>
+              </widget>
+              <packing>
+                <property name="y">256</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkTextView" id="textview_msg">
+                <property name="width_request">136</property>
+                <property name="height_request">264</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+              </widget>
+              <packing>
+                <property name="x">536</property>
+                <property name="y">8</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkEntry" id="entry_dev1">
+                <property name="width_request">72</property>
+                <property name="height_request">24</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+              </widget>
+              <packing>
+                <property name="x">240</property>
+                <property name="y">8</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkEntry" id="entry_dev2">
+                <property name="width_request">89</property>
+                <property name="height_request">24</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+              </widget>
+              <packing>
+                <property name="x">422</property>
+                <property name="y">8</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkEntry" id="entry_sendfax_filepath">
+                <property name="width_request">158</property>
+                <property name="height_request">25</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+              </widget>
+              <packing>
+                <property name="x">280</property>
+                <property name="y">176</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkEntry" id="entry_recvfax_filepath">
+                <property name="width_request">158</property>
+                <property name="height_request">25</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+              </widget>
+              <packing>
+                <property name="x">280</property>
+                <property name="y">208</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkButton" id="button_recvfax">
+                <property name="label" translatable="yes">RecvFax</property>
+                <property name="width_request">72</property>
+                <property name="height_request">24</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="use_underline">True</property>
+              </widget>
+              <packing>
+                <property name="x">200</property>
+                <property name="y">208</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkButton" id="button_sendfax">
+                <property name="label" translatable="yes">SendFax</property>
+                <property name="width_request">72</property>
+                <property name="height_request">24</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="use_underline">True</property>
+              </widget>
+              <packing>
+                <property name="x">200</property>
+                <property name="y">176</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkButton" id="button_stopsendfax">
+                <property name="label" translatable="yes">StopSendFax</property>
+                <property name="width_request">96</property>
+                <property name="height_request">24</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="use_underline">True</property>
+              </widget>
+              <packing>
+                <property name="x">440</property>
+                <property name="y">176</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkButton" id="button_stoprecvfax">
+                <property name="label" translatable="yes">StopRecvFax</property>
+                <property name="width_request">96</property>
+                <property name="height_request">24</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="use_underline">True</property>
+              </widget>
+              <packing>
+                <property name="x">440</property>
+                <property name="y">208</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkLabel" id="label3">
+                <property name="width_request">40</property>
+                <property name="height_request">24</property>
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Dev1</property>
+              </widget>
+              <packing>
+                <property name="x">200</property>
+                <property name="y">8</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkLabel" id="label4">
+                <property name="width_request">40</property>
+                <property name="height_request">25</property>
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Dev2</property>
+              </widget>
+              <packing>
+                <property name="x">379</property>
+                <property name="y">8</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkButton" id="button_devchange">
+                <property name="label" translatable="yes">&lt;==&gt;</property>
+                <property name="width_request">59</property>
+                <property name="height_request">26</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="use_underline">True</property>
+              </widget>
+              <packing>
+                <property name="x">320</property>
+                <property name="y">8</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkTextView" id="textview1">
+                <property name="width_request">136</property>
+                <property name="height_request">192</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+              </widget>
+              <packing>
+                <property name="x">24</property>
+                <property name="y">40</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkComboBox" id="combobox1">
+                <property name="width_request">104</property>
+                <property name="height_request">35</property>
+                <property name="visible">True</property>
+                <property name="items" translatable="yes">q
+q</property>
+              </widget>
+              <packing>
+                <property name="x">89</property>
+                <property name="y">4</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child internal-child="action_area">
+          <widget class="GtkHButtonBox" id="dialog-action_area1">
+            <property name="visible">True</property>
+            <property name="layout_style">end</property>
+          </widget>
+          <packing>
+            <property name="expand">False</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+</glade-interface>

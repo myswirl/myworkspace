@@ -1,0 +1,9 @@
+#!/bin/sh
+echo "Hit a key,then hit return"
+read Keypress
+case "$Keypress" in
+	[A-Z] ) echo "Uppercase Letter";;
+	[a-z] ) echo "Lovercase letter";;
+	[0-9] ) echo "Digit";;
+	*) echo "Punctutation,whitespace,or other";;
+esac

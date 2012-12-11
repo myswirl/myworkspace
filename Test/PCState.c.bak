@@ -1,0 +1,181 @@
+/************************************************************
+ * Copyright (C), 2009-2011, Donjin Tech. Co., Ltd.
+ * FileName:		// 文件名
+ * Author:			// 作者
+ * Date:			// 日期
+ * Description:		// 模块描述
+ * Version:			// 版本信息
+ * History:			// 历史修改记录
+ *     <author>  <time>   <version >   <desc>
+ *     David    96/10/12     1.0     build this moudle
+ ***********************************************************/
+#include  <stdio.h>
+#include  <stdlib.h>
+#include  <ctype.h>
+#include  <string.h>
+#include  <fcntl.h>
+#include  <unistd.h>
+#include  <errno.h>
+
+typedef struct
+{
+	char			name[20];
+	unsigned int	user;
+	unsigned int	nice;
+	unsigned int	system;
+	unsigned int	idle;
+	unsigned int	iowait;
+	unsigned int	hardirq;
+	unsigned int	softirq;
+}CPU_OCCUPY;
+
+int get_CPUActiveInfo( char* pCPUName, CPU_OCCUPY *pOccu );
+
+
+int getmemstate( void );
+
+
+/***********************************************************
+* Function:       // get_CPUActiveInfo
+* Description:    // 获取CPU活动信息
+* Input:          // 1.pCPUName:CPU名称
+* Output:         // 1.pOccu:CPU活动信息结构体指针
+* Return:         //
+***********************************************************/
+int get_CPUActiveInfo( char* pCPUName, CPU_OCCUPY *pOccu )
+{
+	FILE	*fd;
+	char	buff[1024];
+
+	if( NULL == pCPUName || NULL == pOccu )
+	{
+		printf( "Error, get_CPUActiveInfo() input param is wrong! pCPUName:%p, pOccu:%p.\n", pCPUName, pOccu );
+		return -1;  //输入参数有误
+	}
+
+	fd = fopen( "/proc/stat", "r" );
+	if( fd == NULL )
+	{
+		printf( "Error, get_CPUActiveInfo() read file %s fail! err_msg:%s.\n", "/proc/stat", strerror( errno ) );
+		return -2;  //读取文件出错
+	}
+
+	memset( buff, 0, sizeof( buff ) );
+
+	while( fgets( buff, sizeof( buff ), fd ) != NULL )
+	{
+		memset( pOccu, 0, sizeof( CPU_OCCUPY ) );
+
+		sscanf( buff, "%s %u %u %u %u %u %u %u", &pOccu->name, &pOccu->user, &pOccu->nice, &pOccu->system, &pOccu->idle, &pOccu->iowait, &pOccu->hardirq, &pOccu->softirq );
+
+		//printf( "%s %u %u %u %u %u %u %u\n", pOccu->name, pOccu->user, pOccu->nice, pOccu->system, pOccu->idle, pOccu->iowait, pOccu->hardirq, pOccu->softirq );
+
+		if( strcmp( pCPUName, pOccu->name ) == 0 )
+		{
+			//printf( "get right cpu info, %s \n",pCPUName);
+			fclose( fd );
+			return 0;
+		}
+	}
+
+	fclose( fd );
+	printf( "Error, get_CPUActiveInfo() not find cpu %s! \n", pCPUName );
+	return -3;
+}
+
+/***********************************************************
+* Function:       // 函数名称
+* Description:    // 函数功能、性能等的描述
+* Input:          // 1.输入参数1，说明，包括每个参数的作用、取值说明及参数间关系
+* Input:          // 2.输入参数2，说明，包括每个参数的作用、取值说明及参数间关系
+* Output:         // 1.输出参数1，说明
+* Return:         // 函数返回值的说明
+* Others:         // 其它说明
+***********************************************************/
+int getmemstate( void )
+{
+	int				fd, len;
+	int				i;
+	char			buffer[4 * 1024 + 1];
+	char			*buf;
+	char			str[6][30] = { "MemTotal", "MemFree", "Buffers", "Cached", "VmallocTotal", "VmallocUsed" };
+	unsigned int	ret[6];
+	int				MemUsed;    // MB
+	int				MemUsage;   // MemUsage %
+
+	fd	   = open( "/proc/meminfo", O_RDONLY );
+	len	   = read( fd, buffer, sizeof( buffer ) - 1 );
+	close( fd );
+
+	for( i = 0; i < 6; i++ )
+	{
+		buf = (char *)buffer;
+		char *str1 = str[i];
+		buf = strstr( buf, str1 );
+		if( NULL == buf )
+		{
+			return -1;
+		}
+		while( !isspace( *buf ) )
+		{
+			buf++;
+		}
+		while( isspace( *buf ) )
+		{
+			buf++;
+		}
+		ret[i] = strtoul( buf, &buf, 0 ) / 1024;
+	}
+	MemUsed	   = ret[0] - ret[1] - ret[2] - ret[3]; //MemUsed = MemTotal - MemFree - Buffers - Cached
+	MemUsage   = MemUsed * 100 / ret[0];
+
+	printf( "-------------MemoryInfo-------------\n" );
+	for( i = 0; i < 6; i++ )
+	{
+		printf( "%12s: %4d MByte \n", str[i], ret[i] );
+	}
+	printf( "%12s: %4d MByte \n", "MemUsed", MemUsed );
+	printf( "%12s: %d%% \n\n", "MemUsage", MemUsage );
+
+	return 1;
+}
+
+/***********************************************************
+* Function:       // main
+* Description:    // 主函数
+***********************************************************/
+int main( )
+{
+	unsigned int	cpu_num;
+	unsigned int	uTotalOccupy, uIdleOccupy, uUsedOccupy;
+	CPU_OCCUPY		ocpu;
+	CPU_OCCUPY		ncpu;
+
+	cpu_num = sysconf( _SC_NPROCESSORS_ONLN );
+
+	while( 1 )
+	{
+		get_CPUActiveInfo( "cpu0", &ocpu );
+		sleep( 3 );
+		get_CPUActiveInfo( "cpu0", &ncpu );
+
+		uTotalOccupy = ( ncpu.idle + ncpu.nice + ncpu.system + ncpu.user + ncpu.iowait + ncpu.hardirq + ncpu.softirq )
+		               - ( ocpu.idle + ocpu.nice + ocpu.system + ocpu.user + ocpu.iowait + ocpu.hardirq + ocpu.softirq );
+
+		if( uTotalOccupy == 0 )
+		{
+			return 0;
+		}
+		uUsedOccupy = ( ncpu.nice + ncpu.system + ncpu.user + ncpu.iowait + ncpu.hardirq + ncpu.softirq )
+		              - ( ocpu.nice + ocpu.system + ocpu.user + ocpu.iowait + ocpu.hardirq + ocpu.softirq );
+
+		uIdleOccupy = ncpu.idle - ocpu.idle;
+		printf( "cpu, usage is %d \n",  ( uTotalOccupy - uIdleOccupy ) * 100 / uTotalOccupy );
+		
+		
+		getmemstate( );
+	}
+	return 0;
+}
+
+/************************************** The End Of File **************************************/
