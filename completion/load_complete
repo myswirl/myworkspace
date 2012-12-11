@@ -1,0 +1,10 @@
+#!bin/sh
+module="complete"
+device="complete"
+# 装载模块
+/sbin/insmod ./complete.ko $* || exit 1
+# 删除原有节点
+rm -f /dev/complete
+#从/proc/devices中获取主设备号，并在/dev目录中创建设备文件
+major=`cat /proc/devices | awk "\\$2==\"complete\" {print \\$1}"`
+mknod /dev/complete c $major 0
