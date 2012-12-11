@@ -1,0 +1,30 @@
+---- ------- Matches (78 in 3 files) ----
+Myncurses.cpp (d:\mingyangworkspace\xms_switchdemo):	draw_msg( "Parse the input command--------------------------------" );
+XMS_SwitchDemo_Event.cpp (d:\mingyangworkspace\xms_switchdemo):// --------------------------------------------------------------------------
+XMS_SwitchDemo_Event.cpp (d:\mingyangworkspace\xms_switchdemo)://添加接口通道设备------------------------------------------------------
+XMS_SwitchDemo_Event.cpp (d:\mingyangworkspace\xms_switchdemo)://添加语音设备-------------------------------------------------------------------
+XMS_SwitchDemo_Event.cpp (d:\mingyangworkspace\xms_switchdemo)://添加板卡设备-------------------------------------------
+XMS_SwitchDemo_Event.cpp (d:\mingyangworkspace\xms_switchdemo):// --------------------------------------------------------------------------
+XMS_SwitchDemo_Event.cpp (d:\mingyangworkspace\xms_switchdemo)://回调函数-----------------------------------------------------------------------
+XMS_SwitchDemo_Sub.cpp (d:\mingyangworkspace\xms_switchdemo)://根据E1端口分配的通道数的不同,计算当前iSeqID所在的行-----------------------------
+XMS_SwitchDemo_Sub.cpp (d:\mingyangworkspace\xms_switchdemo)://更改 接口通道列表框 called calling 标志位---------------------------------------
+XMS_SwitchDemo_Sub.cpp (d:\mingyangworkspace\xms_switchdemo)://更改接口通道列表框的 LineState 标志位------------------------------------------------
+XMS_SwitchDemo_Sub.cpp (d:\mingyangworkspace\xms_switchdemo)://更改 坐席资源列表框 的 FailReason----------------------------------------------
+XMS_SwitchDemo_Sub.cpp (d:\mingyangworkspace\xms_switchdemo)://读取初始化文件XMS_SwitchDemo.INI-----------------------------------------------------
+XMS_SwitchDemo_Sub.cpp (d:\mingyangworkspace\xms_switchdemo)://打开接口通道设备----------------------------------------------------------------
+XMS_SwitchDemo_Sub.cpp (d:\mingyangworkspace\xms_switchdemo)://打开语音设备------------------------------------------------------------------
+XMS_SwitchDemo_Sub.cpp (d:\mingyangworkspace\xms_switchdemo)://打开板卡设备------------------------------------------------------------
+XMS_SwitchDemo_Sub.cpp (d:\mingyangworkspace\xms_switchdemo)://打开模块号为s8DspModID的DSP板卡设备上的所有设备---------------------------------------------------
+XMS_SwitchDemo_Sub.cpp (d:\mingyangworkspace\xms_switchdemo):	// ---------- set Freq ----------
+XMS_SwitchDemo_Sub.cpp (d:\mingyangworkspace\xms_switchdemo):	// ---------- set DialTone ----------
+XMS_SwitchDemo_Sub.cpp (d:\mingyangworkspace\xms_switchdemo):	// ---------- set RingBack Tone ----------
+XMS_SwitchDemo_Sub.cpp (d:\mingyangworkspace\xms_switchdemo):	// ---------- set Busy Tone0 ----------
+XMS_SwitchDemo_Sub.cpp (d:\mingyangworkspace\xms_switchdemo):	// ---------- set Busy Tone1 ----------
+XMS_SwitchDemo_Sub.cpp (d:\mingyangworkspace\xms_switchdemo):	// ---------- set Busy Tone2 ----------
+XMS_SwitchDemo_Sub.cpp (d:\mingyangworkspace\xms_switchdemo)://改变语音设备状态-----------------------------------------------------------
+XMS_SwitchDemo_Sub.cpp (d:\mingyangworkspace\xms_switchdemo):// --------------------------------------------------------------------------------
+XMS_SwitchDemo_Sub.cpp (d:\mingyangworkspace\xms_switchdemo):// --------------------------------------------------------------------------------
+XMS_SwitchDemo_Sub.cpp (d:\mingyangworkspace\xms_switchdemo):// -------------------------------------------------------------------------------------------------
+XMS_SwitchDemo_Sub.cpp (d:\mingyangworkspace\xms_switchdemo)://初始化中继通道设备--------------------------------------------------------
+XMS_SwitchDemo_Sub.cpp (d:\mingyangworkspace\xms_switchdemo)://---------------------------
+XMS_SwitchDemo_Sub.cpp (d:\mingyangworkspace\xms_switchdemo)://业务处理函数--------------------------------------------------------------------
