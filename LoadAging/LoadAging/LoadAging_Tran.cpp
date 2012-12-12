@@ -12,7 +12,7 @@ extern CLoadAgingApp theApp;
 CLoadAgingDlg	*pdlg;
 
 // var about LoadAging.ini
-char			cfg_SoftwareVersion[32]="V1.09";					//软件版本标识
+char			cfg_SoftwareVersion[32]="V1.10";					//软件版本标识
 char			cfg_IniName[256] = "";
 char			cfg_IniShortName[] = "\\LoadAging.ini";
 char			cfg_NormalPassword[128]={0};				//技术人员密码
@@ -23,6 +23,9 @@ int				cfg_EnableBeep;								//使能蜂鸣器
 int				cfg_EnableLight;							//使能指示灯
 int				cfg_DisplayTestInfo;						//是否统计测试信息
 int				cfg_PowerMax;								//功率上限值
+int				cfg_CurrentErrorPercent=10;					//电流偏差百分比 在设定值的基础上正负百分之十
+int				cfg_VoltageErrorPercent=10;					//电压偏差百分比 在设定值的基础上正负百分之十
+
 //系统全局变量--------------------------------------------
 int				g_LoginCheckOK=-1;							//登录校验是否通过,-1:校验失败；0:工程师登录成功；1:技术员登录成功
 long			g_SystemRunTimeCounter=0;					//系统运行时间计数器
@@ -52,6 +55,9 @@ void	ReadFromConfig(void)
 	cfg_EnableLight = GetPrivateProfileInt ( "ConfigInfo", "EnableLight", 1, cfg_IniName);		//是否使能指示灯
 	
 	cfg_PowerMax = GetPrivateProfileInt ( "ConfigInfo", "PowerMax", 75, cfg_IniName);		//功率上限值，add by lmy 20120613
+
+	cfg_CurrentErrorPercent = GetPrivateProfileInt ( "ConfigInfo", "CurrentErrorPercent", 10, cfg_IniName);	
+	cfg_VoltageErrorPercent = GetPrivateProfileInt ( "ConfigInfo", "VoltageErrorPercent", 10, cfg_IniName);	
 
 	GetPrivateProfileString ( "ConfigInfo", "NormalPassword", "000000", cfg_NormalPassword, sizeof(cfg_NormalPassword), cfg_IniName);
 	GetPrivateProfileString ( "ConfigInfo", "SuperPassword", "000000", cfg_SuperPassword, sizeof(cfg_SuperPassword), cfg_IniName);
@@ -1184,7 +1190,7 @@ bool ChnTestDataCompare(int carID, int loadNum, int iChnIndex)
 				}
 			}
 			
-		}else if (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowVoltage <= g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin)
+		}else if (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowVoltage <	g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin)
 		{
 			if (g_AllCar[carID].m_TimeCounter>200)
 			{
@@ -1196,7 +1202,7 @@ bool ChnTestDataCompare(int carID, int loadNum, int iChnIndex)
 				sprintf(tmpStr,"Error, CHN_STATE_LOWVOL, carID:%d, loadNum:%d, iChnIndex:%d", carID,loadNum, iChnIndex);
 				WriteLog(LEVEL_DEBUG, tmpStr);
 			}
-		}else if (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowVoltage >= g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax)
+		}else if (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowVoltage >	g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax)
 		{
 			if (g_AllCar[carID].m_TimeCounter>200)
 			{
@@ -1208,7 +1214,7 @@ bool ChnTestDataCompare(int carID, int loadNum, int iChnIndex)
 				sprintf(tmpStr,"Error, CHN_STATE_OVEROWVOL, carID:%d, loadNum:%d, iChnIndex:%d", carID,loadNum, iChnIndex);
 				WriteLog(LEVEL_DEBUG, tmpStr);
 			}
-		}else if (	g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowCurrent >= g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue + g_SetCurrentError )
+		}else if (	g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowCurrent > (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue * (( 100 +cfg_CurrentErrorPercent )/100) ))
 		{
 			if (g_AllCar[carID].m_TimeCounter>200)
 			{				
@@ -1221,7 +1227,7 @@ bool ChnTestDataCompare(int carID, int loadNum, int iChnIndex)
 				WriteLog(LEVEL_DEBUG, tmpStr);
 			}
 			
-		}else if (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowCurrent <= g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue - g_SetCurrentError )
+		}else if (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowCurrent < (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue * (( 100 - cfg_CurrentErrorPercent )/100) ))
 		{
 			if (g_AllCar[carID].m_TimeCounter>200)
 			{
@@ -1248,7 +1254,7 @@ bool ChnTestDataCompare(int carID, int loadNum, int iChnIndex)
 				g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_ChnHaveBeenError=1;
 				existErrorData = TRUE;	
 			}
-		}else if (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowCurrent <=	g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin)
+		}else if (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowCurrent <	g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin)
 		{
 			if (g_AllCar[carID].m_TimeCounter>200)
 			{
@@ -1261,7 +1267,7 @@ bool ChnTestDataCompare(int carID, int loadNum, int iChnIndex)
 				WriteLog(LEVEL_DEBUG, tmpStr);	
 			}
 			
-		}else if (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowCurrent >=	g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax)
+		}else if (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowCurrent >	g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax)
 		{
 			if (g_AllCar[carID].m_TimeCounter>200)
 			{
@@ -1274,7 +1280,7 @@ bool ChnTestDataCompare(int carID, int loadNum, int iChnIndex)
 				WriteLog(LEVEL_DEBUG, tmpStr);
 			}
 			
-		}else if (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowVoltage >=	g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue + g_SetVoltageError)
+		}else if (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowVoltage >	(g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue*((100+cfg_VoltageErrorPercent)/100)))
 		{
 			if (g_AllCar[carID].m_TimeCounter>200)
 			{
@@ -1288,7 +1294,7 @@ bool ChnTestDataCompare(int carID, int loadNum, int iChnIndex)
 			}		
 			
 		}else if (
-			g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowVoltage <= g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue - g_SetVoltageError)
+			g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowVoltage < (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue*((100-cfg_VoltageErrorPercent)/100)))
 		{
 			if (g_AllCar[carID].m_TimeCounter>200)
 			{
