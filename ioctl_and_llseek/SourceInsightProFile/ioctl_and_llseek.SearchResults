@@ -1,0 +1,5 @@
+---- PDEBUG Matches (4 in 1 files) ----
+Scull.h (d:\mingyangworkspace\ioctl_and_llseek):#undef PDEBUG             /* undef it, just in case */
+Scull.h (d:\mingyangworkspace\ioctl_and_llseek):#    define PDEBUG(fmt, args...) printk( KERN_DEBUG "scull: " fmt, ## args)
+Scull.h (d:\mingyangworkspace\ioctl_and_llseek):#    define PDEBUG(fmt, args...) fprintf(stderr, fmt, ## args)
+Scull.h (d:\mingyangworkspace\ioctl_and_llseek):#  define PDEBUG(fmt, args...) /* not debugging: nothing */

@@ -1,0 +1,6 @@
+---- read Matches (5 in 2 files) ----
+Scull.c (d:\mingyangworkspace\scull):	/* read only up to the end of this quantum */
+Scull.c (d:\mingyangworkspace\scull):	.read	   = scull_read,    //用来从设备读取数据
+Scull_test.c (d:\mingyangworkspace\scull\scull-test):		if( ( code = read( sculltest, &buffer2[20 - i], i ) ) != i )
+Scull_test.c (d:\mingyangworkspace\scull\scull-test):			printf( "read error! code=%d \n", code );
+Scull_test.c (d:\mingyangworkspace\scull\scull-test):			printf( "read ok! code=%d \n", code );
