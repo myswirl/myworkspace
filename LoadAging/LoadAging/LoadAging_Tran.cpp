@@ -25,6 +25,9 @@ int				cfg_DisplayTestInfo;						//是否统计测试信息
 int				cfg_PowerMax;								//功率上限值
 int				cfg_CurrentErrorPercent=10;					//电流偏差百分比 在设定值的基础上正负百分之十
 int				cfg_VoltageErrorPercent=10;					//电压偏差百分比 在设定值的基础上正负百分之十
+int				cfg_IsDealwithRecvData=1;					//是否使能数据处理
+int				cfg_FixDataPercent=3;						//定值的偏差范围千分之1---3
+int				cfg_NoFixDataPercent=3;						//非定值的偏差范围千分之1---3
 
 //系统全局变量--------------------------------------------
 int				g_LoginCheckOK=-1;							//登录校验是否通过,-1:校验失败；0:工程师登录成功；1:技术员登录成功
@@ -60,6 +63,9 @@ void	ReadFromConfig(void)
 
 	cfg_CurrentErrorPercent = GetPrivateProfileInt ( "ConfigInfo", "CurrentErrorPercent", 10, cfg_IniName);	
 	cfg_VoltageErrorPercent = GetPrivateProfileInt ( "ConfigInfo", "VoltageErrorPercent", 10, cfg_IniName);	
+	cfg_IsDealwithRecvData= GetPrivateProfileInt ( "ConfigInfo", "IsDealwithRecvData", 1, cfg_IniName);					//是否使能数据处理
+	cfg_FixDataPercent = GetPrivateProfileInt ( "ConfigInfo", "FixDataPercent", 3, cfg_IniName);						//定值的偏差范围千分之1---3
+	cfg_NoFixDataPercent= GetPrivateProfileInt ( "ConfigInfo", "NoFixDataPercent", 3, cfg_IniName);						//非定值的偏差范围千分之1---3
 
 	GetPrivateProfileString ( "ConfigInfo", "NormalPassword", "000000", cfg_NormalPassword, sizeof(cfg_NormalPassword), cfg_IniName);
 	GetPrivateProfileString ( "ConfigInfo", "SuperPassword", "000000", cfg_SuperPassword, sizeof(cfg_SuperPassword), cfg_IniName);
@@ -1345,8 +1351,6 @@ float DealWithSerialPortData_NowVoltage(int carID, int loadNum, int iChnIndex, f
 	//当 恒流测试， 电流定值在10%波动，电压在上下限15%波动，这时显示的值更改为 电流值在正负千分之1-千分之3波动，电压值在正负1%-3%波动；
 
     int randomNum_percent_begin = 1;
-    int randomNum_percent_end = 3;
-	int randomNum_percent_end_nofix = 10;
 	int randomNum_percent=1;//随机产生的偏差百分比，1-3%
 	
 	int randomNum_oddeven_begin = 1;//随机产生的odd even，1 or 2
@@ -1356,7 +1360,8 @@ float DealWithSerialPortData_NowVoltage(int carID, int loadNum, int iChnIndex, f
 	char tmpStr[256];
 	memset(tmpStr, 0, sizeof(tmpStr));
 
-	sprintf(tmpStr,"NowVoltage(), carID:%d, loadNum:%d, iChnIndex:%d, nowVoltage:%f, m_ParaMode:%d, m_LoadMode:%d, m_SetValue:%f, m_SetMin:%f, m_SetMax:%f\n ", 
+	sprintf(tmpStr,"NowVoltage(), cfg_IsDealwithRecvData:%d, carID:%d, loadNum:%d, iChnIndex:%d, nowVoltage:%f, m_ParaMode:%d, m_LoadMode:%d, m_SetValue:%f, m_SetMin:%f, m_SetMax:%f\n ", 
+		cfg_IsDealwithRecvData,
 		carID,
 		loadNum,
 		iChnIndex,
@@ -1372,6 +1377,12 @@ float DealWithSerialPortData_NowVoltage(int carID, int loadNum, int iChnIndex, f
 	{
 		return -1;
 	}
+
+	if (cfg_IsDealwithRecvData == 0)
+	{
+		return -1;
+	}
+	
 	
 	if (g_AllCar[carID].m_Load[loadNum-1].m_ParaMode == 0 && g_AllCar[carID].m_Load[loadNum-1].m_LoadMode == LOAD_MODE_CC )//当前传入电压值，恒流测试,单路测试
 	{	
@@ -1386,7 +1397,7 @@ float DealWithSerialPortData_NowVoltage(int carID, int loadNum, int iChnIndex, f
 		//如果当前电压值在当前上下限的 15%误差内
 		//未超出设定值，则在 设定值的 正负千分之1-10 波动
 		srand((unsigned)time(NULL));
-		randomNum_percent = randomNum_percent_begin+rand()%randomNum_percent_end_nofix;
+		randomNum_percent = randomNum_percent_begin+rand()%cfg_NoFixDataPercent;
 		
 		srand((unsigned)time(NULL));
 		randomNum_oddeven = randomNum_oddeven_begin+rand()%randomNum_oddeven_end;
@@ -1411,7 +1422,7 @@ float DealWithSerialPortData_NowVoltage(int carID, int loadNum, int iChnIndex, f
 		}
 		//未超出设定值，则在 设定值的 正负千分之1-3 波动
 		srand((unsigned)time(NULL));
-		randomNum_percent = randomNum_percent_begin+rand()%randomNum_percent_end;
+		randomNum_percent = randomNum_percent_begin+rand()%cfg_FixDataPercent;
 
 		srand((unsigned)time(NULL));
 		randomNum_oddeven = randomNum_oddeven_begin+rand()%randomNum_oddeven_end;
@@ -1432,8 +1443,6 @@ float DealWithSerialPortData_NowCurrent(int carID, int loadNum, int iChnIndex, f
 {
 	//产生1到3之间的随机数
     int randomNum_percent_begin = 1;
-    int randomNum_percent_end = 3;
-	int randomNum_percent_end_nofix = 10;//非定值的波动范围千分之1---10
 	int randomNum_percent=1;//随机产生的偏差百分比，1-3%
 	int randomNum_oddeven_begin = 1;//随机产生的odd even，1 or 2
 	int randomNum_oddeven_end = 2;//随机产生的odd even，1 or 2
@@ -1442,7 +1451,8 @@ float DealWithSerialPortData_NowCurrent(int carID, int loadNum, int iChnIndex, f
 	char tmpStr[256];
 	memset(tmpStr, 0, sizeof(tmpStr));
 	
-	sprintf(tmpStr,"NowVoltage(), carID:%d, loadNum:%d, iChnIndex:%d, nowCurrent:%f, m_ParaMode:%d, m_LoadMode:%d, m_SetValue:%f, m_SetMin:%f, m_SetMax:%f\n ", 
+	sprintf(tmpStr,"NowVoltage(), cfg_IsDealwithRecvData:%d, carID:%d, loadNum:%d, iChnIndex:%d, nowCurrent:%f, m_ParaMode:%d, m_LoadMode:%d, m_SetValue:%f, m_SetMin:%f, m_SetMax:%f\n ", 
+		cfg_IsDealwithRecvData,
 		carID,
 		loadNum,
 		iChnIndex,
@@ -1458,7 +1468,10 @@ float DealWithSerialPortData_NowCurrent(int carID, int loadNum, int iChnIndex, f
 	{
 		return -1;
 	}
-	
+	if (cfg_IsDealwithRecvData == 0)
+	{
+		return -1;
+	}
 	if (g_AllCar[carID].m_Load[loadNum-1].m_ParaMode == 0 && g_AllCar[carID].m_Load[loadNum-1].m_LoadMode == LOAD_MODE_CV )//当前传入电流值，恒压， 单路测试
 	{	
 		if ((nowCurrent - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin*0.85 ) < EPSINON)
@@ -1472,7 +1485,7 @@ float DealWithSerialPortData_NowCurrent(int carID, int loadNum, int iChnIndex, f
 		//如果当前电压值在当前上下限的 15%误差内
 		//未超出设定值，则在 设定值的 正负千分之1-10 波动
 		srand((unsigned)time(NULL));
-		randomNum_percent = randomNum_percent_begin+rand()%randomNum_percent_end_nofix;
+		randomNum_percent = randomNum_percent_begin+rand()%cfg_NoFixDataPercent;
 		
 		srand((unsigned)time(NULL));
 		randomNum_oddeven = randomNum_oddeven_begin+rand()%randomNum_oddeven_end;
@@ -1497,7 +1510,7 @@ float DealWithSerialPortData_NowCurrent(int carID, int loadNum, int iChnIndex, f
 		}
 		//未超出设定值，则在 设定值的 正负千分之1-3 波动
 		srand((unsigned)time(NULL));
-		randomNum_percent = randomNum_percent_begin+rand()%randomNum_percent_end;
+		randomNum_percent = randomNum_percent_begin+rand()%cfg_FixDataPercent;
 		
 		srand((unsigned)time(NULL));
 		randomNum_oddeven = randomNum_oddeven_begin+rand()%randomNum_oddeven_end;
