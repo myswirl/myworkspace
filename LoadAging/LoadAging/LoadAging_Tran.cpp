@@ -1341,10 +1341,13 @@ bool IsMainBoardCommand(int funcNum)
 //对当前获取到的电压数据进行处理，返回值-1表示不处理，返回多少就显示多少
 float DealWithSerialPortData_NowVoltage(int carID, int loadNum, int iChnIndex, float nowVoltage)
 {
-	//产生1到3之间的随机数
+	//当 恒压测试， 电压定值在10%波动，电流在上下限15%波动，这时显示的值更改为 电压值在正负千分之1-千分之3波动，电流值在正负1%-3%波动；
+	//当 恒流测试， 电流定值在10%波动，电压在上下限15%波动，这时显示的值更改为 电流值在正负千分之1-千分之3波动，电压值在正负1%-3%波动；
+
     int randomNum_percent_begin = 1;
     int randomNum_percent_end = 3;
 	int randomNum_percent=1;//随机产生的偏差百分比，1-3%
+	
 	int randomNum_oddeven_begin = 1;//随机产生的odd even，1 or 2
 	int randomNum_oddeven_end = 2;//随机产生的odd even，1 or 2
 	int randomNum_oddeven = 1;//随机产生的odd even，1 or 2
@@ -1369,7 +1372,7 @@ float DealWithSerialPortData_NowVoltage(int carID, int loadNum, int iChnIndex, f
 		return -1;
 	}
 	
-	if (g_AllCar[carID].m_Load[loadNum-1].m_ParaMode == 0 && g_AllCar[carID].m_Load[loadNum-1].m_LoadMode == LOAD_MODE_CC )//恒流,单路测试
+	if (g_AllCar[carID].m_Load[loadNum-1].m_ParaMode == 0 && g_AllCar[carID].m_Load[loadNum-1].m_LoadMode == LOAD_MODE_CC )//当前传入电压值，恒流测试,单路测试
 	{	
 		if ((nowVoltage - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin*0.85 ) < EPSINON)
 		{
@@ -1395,7 +1398,7 @@ float DealWithSerialPortData_NowVoltage(int carID, int loadNum, int iChnIndex, f
 			return (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin+g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax)/2*(100.0-randomNum_percent)/100.0;
 		}
 
-	}else if (g_AllCar[carID].m_Load[loadNum-1].m_ParaMode == 0 && g_AllCar[carID].m_Load[loadNum-1].m_LoadMode == LOAD_MODE_CV )//恒压， 单路测试
+	}else if (g_AllCar[carID].m_Load[loadNum-1].m_ParaMode == 0 && g_AllCar[carID].m_Load[loadNum-1].m_LoadMode == LOAD_MODE_CV )//当前传入电压值，恒压，单路测试
 	{
 		if ( (nowVoltage - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue*1.1) > EPSINON )
 		{
@@ -1405,7 +1408,7 @@ float DealWithSerialPortData_NowVoltage(int carID, int loadNum, int iChnIndex, f
 		{
 			return -1;//超出设定值的百分之十
 		}
-		//未超出设定值，则在 设定值的 正负百分之1-3 波动
+		//未超出设定值，则在 设定值的 正负千分之1-3 波动
 		srand((unsigned)time(NULL));
 		randomNum_percent = randomNum_percent_begin+rand()%randomNum_percent_end;
 
@@ -1414,10 +1417,10 @@ float DealWithSerialPortData_NowVoltage(int carID, int loadNum, int iChnIndex, f
 
 		if (randomNum_oddeven == 1)
 		{
-			return g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue*(100.0+randomNum_percent)/100.0;
+			return g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue*(1000.0+randomNum_percent)/1000.0;
 		}else
 		{
-			return g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue*(100.0-randomNum_percent)/100.0;
+			return g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue*(1000.0-randomNum_percent)/1000.0;
 		}
 
 	}
@@ -1454,7 +1457,7 @@ float DealWithSerialPortData_NowCurrent(int carID, int loadNum, int iChnIndex, f
 		return -1;
 	}
 	
-	if (g_AllCar[carID].m_Load[loadNum-1].m_ParaMode == 0 && g_AllCar[carID].m_Load[loadNum-1].m_LoadMode == LOAD_MODE_CV )//恒压， 单路测试
+	if (g_AllCar[carID].m_Load[loadNum-1].m_ParaMode == 0 && g_AllCar[carID].m_Load[loadNum-1].m_LoadMode == LOAD_MODE_CV )//当前传入电流值，恒压， 单路测试
 	{	
 		if ((nowCurrent - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin*0.85 ) < EPSINON)
 		{
@@ -1480,7 +1483,7 @@ float DealWithSerialPortData_NowCurrent(int carID, int loadNum, int iChnIndex, f
 			return (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin+g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax)/2*(100.0-randomNum_percent)/100.0;
 		}
 		
-	}else if (g_AllCar[carID].m_Load[loadNum-1].m_ParaMode == 0 && g_AllCar[carID].m_Load[loadNum-1].m_LoadMode == LOAD_MODE_CC )//恒流,单路测试
+	}else if (g_AllCar[carID].m_Load[loadNum-1].m_ParaMode == 0 && g_AllCar[carID].m_Load[loadNum-1].m_LoadMode == LOAD_MODE_CC )//当前传入电流值，恒流,单路测试
 	{
 		if ( (nowCurrent - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue*1.1) > EPSINON )
 		{
@@ -1490,7 +1493,7 @@ float DealWithSerialPortData_NowCurrent(int carID, int loadNum, int iChnIndex, f
 		{
 			return -1;//超出设定值的百分之十
 		}
-		//未超出设定值，则在 设定值的 正负百分之1-3 波动
+		//未超出设定值，则在 设定值的 正负千分之1-3 波动
 		srand((unsigned)time(NULL));
 		randomNum_percent = randomNum_percent_begin+rand()%randomNum_percent_end;
 		
@@ -1499,10 +1502,10 @@ float DealWithSerialPortData_NowCurrent(int carID, int loadNum, int iChnIndex, f
 		
 		if (randomNum_oddeven == 1)
 		{
-			return g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue*(100.0+randomNum_percent)/100.0;
+			return g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue*(1000.0+randomNum_percent)/1000.0;
 		}else
 		{
-			return g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue*(100.0-randomNum_percent)/100.0;
+			return g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue*(1000.0-randomNum_percent)/1000.0;
 		}
 		
 	}
