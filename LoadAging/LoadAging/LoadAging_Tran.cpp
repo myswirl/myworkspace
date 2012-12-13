@@ -1346,6 +1346,7 @@ float DealWithSerialPortData_NowVoltage(int carID, int loadNum, int iChnIndex, f
 
     int randomNum_percent_begin = 1;
     int randomNum_percent_end = 3;
+	int randomNum_percent_end_nofix = 10;
 	int randomNum_percent=1;//随机产生的偏差百分比，1-3%
 	
 	int randomNum_oddeven_begin = 1;//随机产生的odd even，1 or 2
@@ -1383,19 +1384,19 @@ float DealWithSerialPortData_NowVoltage(int carID, int loadNum, int iChnIndex, f
 			return -1;
 		}
 		//如果当前电压值在当前上下限的 15%误差内
-		//未超出设定值，则在 设定值的 正负百分之1-3 波动
+		//未超出设定值，则在 设定值的 正负千分之1-10 波动
 		srand((unsigned)time(NULL));
-		randomNum_percent = randomNum_percent_begin+rand()%randomNum_percent_end;
+		randomNum_percent = randomNum_percent_begin+rand()%randomNum_percent_end_nofix;
 		
 		srand((unsigned)time(NULL));
 		randomNum_oddeven = randomNum_oddeven_begin+rand()%randomNum_oddeven_end;
 		
 		if (randomNum_oddeven == 1)
 		{
-			return (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin+g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax)/2*(100.0+randomNum_percent)/100.0;
+			return (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin+g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax)/2*(1000.0+randomNum_percent)/1000.0;
 		}else
 		{
-			return (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin+g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax)/2*(100.0-randomNum_percent)/100.0;
+			return (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin+g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax)/2*(1000.0-randomNum_percent)/1000.0;
 		}
 
 	}else if (g_AllCar[carID].m_Load[loadNum-1].m_ParaMode == 0 && g_AllCar[carID].m_Load[loadNum-1].m_LoadMode == LOAD_MODE_CV )//当前传入电压值，恒压，单路测试
@@ -1432,6 +1433,7 @@ float DealWithSerialPortData_NowCurrent(int carID, int loadNum, int iChnIndex, f
 	//产生1到3之间的随机数
     int randomNum_percent_begin = 1;
     int randomNum_percent_end = 3;
+	int randomNum_percent_end_nofix = 10;//非定值的波动范围千分之1---10
 	int randomNum_percent=1;//随机产生的偏差百分比，1-3%
 	int randomNum_oddeven_begin = 1;//随机产生的odd even，1 or 2
 	int randomNum_oddeven_end = 2;//随机产生的odd even，1 or 2
@@ -1468,19 +1470,19 @@ float DealWithSerialPortData_NowCurrent(int carID, int loadNum, int iChnIndex, f
 			return -1;
 		}
 		//如果当前电压值在当前上下限的 15%误差内
-		//未超出设定值，则在 设定值的 正负百分之1-3 波动
+		//未超出设定值，则在 设定值的 正负千分之1-10 波动
 		srand((unsigned)time(NULL));
-		randomNum_percent = randomNum_percent_begin+rand()%randomNum_percent_end;
+		randomNum_percent = randomNum_percent_begin+rand()%randomNum_percent_end_nofix;
 		
 		srand((unsigned)time(NULL));
 		randomNum_oddeven = randomNum_oddeven_begin+rand()%randomNum_oddeven_end;
 		
 		if (randomNum_oddeven == 1)
 		{
-			return (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin+g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax)/2*(100.0+randomNum_percent)/100.0;
+			return (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin+g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax)/2*(1000.0+randomNum_percent)/1000.0;
 		}else
 		{
-			return (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin+g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax)/2*(100.0-randomNum_percent)/100.0;
+			return (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin+g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax)/2*(1000.0-randomNum_percent)/1000.0;
 		}
 		
 	}else if (g_AllCar[carID].m_Load[loadNum-1].m_ParaMode == 0 && g_AllCar[carID].m_Load[loadNum-1].m_LoadMode == LOAD_MODE_CC )//当前传入电流值，恒流,单路测试
