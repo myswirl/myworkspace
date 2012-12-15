@@ -23,8 +23,9 @@ int				cfg_EnableBeep;								//使能蜂鸣器
 int				cfg_EnableLight;							//使能指示灯
 int				cfg_DisplayTestInfo;						//是否统计测试信息
 int				cfg_PowerMax;								//功率上限值
-int				cfg_CurrentErrorPercent=10;					//电流偏差百分比 在设定值的基础上正负百分之十
-int				cfg_VoltageErrorPercent=10;					//电压偏差百分比 在设定值的基础上正负百分之十
+int				cfg_CurrentErrorPercent=100;					//电流偏差千分之 100 在设定值的基础上正负千分之一百
+int				cfg_VoltageErrorPercent=100;					//电压偏差千分之 100 在设定值的基础上正负千分之一百
+int				cfg_MaxMinErrorPercent=10;					//上下限，也就是待测试的值，允许在上下限范围的偏差
 int				cfg_IsDealwithRecvData=1;					//是否使能数据处理
 int				cfg_FixDataPercent=3;						//定值的偏差范围千分之1---3
 int				cfg_NoFixDataPercent=3;						//非定值的偏差范围千分之1---3
@@ -61,11 +62,12 @@ void	ReadFromConfig(void)
 	
 	cfg_PowerMax = GetPrivateProfileInt ( "ConfigInfo", "PowerMax", 75, cfg_IniName);		//功率上限值，add by lmy 20120613
 
-	cfg_CurrentErrorPercent = GetPrivateProfileInt ( "ConfigInfo", "CurrentErrorPercent", 10, cfg_IniName);	
-	cfg_VoltageErrorPercent = GetPrivateProfileInt ( "ConfigInfo", "VoltageErrorPercent", 10, cfg_IniName);	
 	cfg_IsDealwithRecvData= GetPrivateProfileInt ( "ConfigInfo", "IsDealwithRecvData", 1, cfg_IniName);					//是否使能数据处理
-	cfg_FixDataPercent = GetPrivateProfileInt ( "ConfigInfo", "FixDataPercent", 3, cfg_IniName);						//定值的偏差范围千分之1---3
-	cfg_NoFixDataPercent= GetPrivateProfileInt ( "ConfigInfo", "NoFixDataPercent", 3, cfg_IniName);						//非定值的偏差范围千分之1---3
+	cfg_FixDataPercent = GetPrivateProfileInt ( "ConfigInfo", "FixDataPercent", 3, cfg_IniName);						//界面显示，处理之后的，定值的偏差范围千分之1---3
+	cfg_NoFixDataPercent= GetPrivateProfileInt ( "ConfigInfo", "NoFixDataPercent", 3, cfg_IniName);						//界面显示，处理之后的，非定值的偏差范围千分之1---3
+	cfg_MaxMinErrorPercent= GetPrivateProfileInt ( "ConfigInfo", "MaxMinErrorPercent", 10, cfg_IniName);				//在上下限的允许偏差范围非定值的偏差范围千分之10
+	cfg_CurrentErrorPercent = GetPrivateProfileInt ( "ConfigInfo", "CurrentErrorPercent", 100, cfg_IniName);			//定值电流的允许偏差范围
+	cfg_VoltageErrorPercent = GetPrivateProfileInt ( "ConfigInfo", "VoltageErrorPercent", 100, cfg_IniName);	//定值电压的允许偏差范围
 
 	GetPrivateProfileString ( "ConfigInfo", "NormalPassword", "000000", cfg_NormalPassword, sizeof(cfg_NormalPassword), cfg_IniName);
 	GetPrivateProfileString ( "ConfigInfo", "SuperPassword", "000000", cfg_SuperPassword, sizeof(cfg_SuperPassword), cfg_IniName);
@@ -1222,7 +1224,7 @@ bool ChnTestDataCompare(int carID, int loadNum, int iChnIndex)
 				sprintf(tmpStr,"Error, CHN_STATE_OVEROWVOL, carID:%d, loadNum:%d, iChnIndex:%d", carID,loadNum, iChnIndex);
 				WriteLog(LEVEL_DEBUG, tmpStr);
 			}
-		}else if ((g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowCurrent - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue * (( 100.0 +cfg_CurrentErrorPercent )/100.0) ) > EPSINON)
+		}else if ((g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowCurrent - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue * (( 1000.0 +cfg_CurrentErrorPercent )/1000.0) ) > EPSINON)
 		{
 			if (g_AllCar[carID].m_TimeCounter>200)
 			{				
@@ -1235,7 +1237,7 @@ bool ChnTestDataCompare(int carID, int loadNum, int iChnIndex)
 				WriteLog(LEVEL_DEBUG, tmpStr);
 			}
 			
-		}else if ((g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowCurrent -g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue * (( 100.0 - cfg_CurrentErrorPercent )/100.0) ) < EPSINON)
+		}else if ((g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowCurrent -g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue * (( 1000.0 - cfg_CurrentErrorPercent )/1000.0) ) < EPSINON)
 		{
 			if (g_AllCar[carID].m_TimeCounter>200)
 			{
@@ -1288,7 +1290,7 @@ bool ChnTestDataCompare(int carID, int loadNum, int iChnIndex)
 				WriteLog(LEVEL_DEBUG, tmpStr);
 			}
 			
-		}else if ((g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowVoltage - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue*((100.0+cfg_VoltageErrorPercent)/100.0) ) > EPSINON)
+		}else if ((g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowVoltage - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue*((1000.0+cfg_VoltageErrorPercent)/1000.0) ) > EPSINON)
 		{
 			if (g_AllCar[carID].m_TimeCounter>200)
 			{
@@ -1301,7 +1303,7 @@ bool ChnTestDataCompare(int carID, int loadNum, int iChnIndex)
 				WriteLog(LEVEL_DEBUG, tmpStr);	
 			}		
 			
-		}else if ((g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowVoltage - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue*((100-cfg_VoltageErrorPercent)/100.0) ) < EPSINON)
+		}else if ((g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowVoltage - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue*((1000-cfg_VoltageErrorPercent)/1000.0) ) < EPSINON)
 		{
 			if (g_AllCar[carID].m_TimeCounter>200)
 			{
@@ -1386,11 +1388,12 @@ float DealWithSerialPortData_NowVoltage(int carID, int loadNum, int iChnIndex, f
 	
 	if (g_AllCar[carID].m_Load[loadNum-1].m_ParaMode == 0 && g_AllCar[carID].m_Load[loadNum-1].m_LoadMode == LOAD_MODE_CC )//当前传入电压值，恒流测试,单路测试
 	{	
-		if ((nowVoltage - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin*0.85 ) < EPSINON)
+		//上下限偏差判断
+		if ((nowVoltage - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin * (( 1000.0 -cfg_MaxMinErrorPercent )/1000.0) ) < EPSINON)
 		{
 			return -1;
 		}
-		if ((nowVoltage - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax*1.15 ) > EPSINON)
+		if ((nowVoltage - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax * (( 1000.0 +cfg_MaxMinErrorPercent )/1000.0) ) > EPSINON)
 		{
 			return -1;
 		}
@@ -1412,11 +1415,12 @@ float DealWithSerialPortData_NowVoltage(int carID, int loadNum, int iChnIndex, f
 
 	}else if (g_AllCar[carID].m_Load[loadNum-1].m_ParaMode == 0 && g_AllCar[carID].m_Load[loadNum-1].m_LoadMode == LOAD_MODE_CV )//当前传入电压值，恒压，单路测试
 	{
-		if ( (nowVoltage - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue*1.1) > EPSINON )
+		//cfg_VoltageErrorPercent定值电压的偏差范围百分比
+		if ((nowVoltage - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue * (( 1000.0 +cfg_VoltageErrorPercent )/1000.0) ) > EPSINON)
 		{
 			return -1; //超出设定值的百分之十
 		}
-		if ( (nowVoltage - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue*0.9) < EPSINON )
+		if ((nowVoltage - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue * (( 1000.0 -cfg_VoltageErrorPercent )/1000.0) ) < EPSINON)
 		{
 			return -1;//超出设定值的百分之十
 		}
@@ -1474,11 +1478,12 @@ float DealWithSerialPortData_NowCurrent(int carID, int loadNum, int iChnIndex, f
 	}
 	if (g_AllCar[carID].m_Load[loadNum-1].m_ParaMode == 0 && g_AllCar[carID].m_Load[loadNum-1].m_LoadMode == LOAD_MODE_CV )//当前传入电流值，恒压， 单路测试
 	{	
-		if ((nowCurrent - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin*0.85 ) < EPSINON)
+		//上下限偏差判断
+		if ((nowCurrent - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin * (( 1000.0 -cfg_MaxMinErrorPercent )/1000.0) ) < EPSINON)
 		{
 			return -1;
 		}
-		if ((nowCurrent - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax*1.15 ) > EPSINON)
+		if ((nowCurrent - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax * (( 1000.0 +cfg_MaxMinErrorPercent )/1000.0) ) > EPSINON)
 		{
 			return -1;
 		}
@@ -1500,11 +1505,12 @@ float DealWithSerialPortData_NowCurrent(int carID, int loadNum, int iChnIndex, f
 		
 	}else if (g_AllCar[carID].m_Load[loadNum-1].m_ParaMode == 0 && g_AllCar[carID].m_Load[loadNum-1].m_LoadMode == LOAD_MODE_CC )//当前传入电流值，恒流,单路测试
 	{
-		if ( (nowCurrent - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue*1.1) > EPSINON )
+		//定值电流的偏差范围cfg_CurrentErrorPercent
+		if ((nowCurrent - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue * (( 1000.0 +cfg_CurrentErrorPercent )/1000.0) ) > EPSINON)
 		{
 			return -1; //超出设定值的百分之十
 		}
-		if ( (nowCurrent - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue*0.9) < EPSINON )
+		if ((nowCurrent - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue * (( 1000.0 -cfg_CurrentErrorPercent )/1000.0) ) < EPSINON)
 		{
 			return -1;//超出设定值的百分之十
 		}
