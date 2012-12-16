@@ -23,8 +23,8 @@ int				cfg_EnableBeep;								//使能蜂鸣器
 int				cfg_EnableLight;							//使能指示灯
 int				cfg_DisplayTestInfo;						//是否统计测试信息
 int				cfg_PowerMax;								//功率上限值
-int				cfg_CurrentErrorPercent=100;					//电流偏差千分之 100 在设定值的基础上正负千分之一百
-int				cfg_VoltageErrorPercent=100;					//电压偏差千分之 100 在设定值的基础上正负千分之一百
+int				cfg_CurrentErrorPercent=100;				//电流偏差千分之 100 在设定值的基础上正负千分之一百
+int				cfg_VoltageErrorPercent=100;				//电压偏差千分之 100 在设定值的基础上正负千分之一百
 int				cfg_MaxMinErrorPercent=10;					//上下限，也就是待测试的值，允许在上下限范围的偏差
 int				cfg_IsDealwithRecvData=1;					//是否使能数据处理
 int				cfg_FixDataPercent=3;						//定值的偏差范围千分之1---3
