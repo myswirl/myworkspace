@@ -1143,6 +1143,10 @@ void WriteSerialPortCommand(int carID, int serialPortCommandType, int curLoadNum
 		{
 			curLoadNum=74;
 			wBuffer[1] = curLoadNum;			
+		}else if (curLoadNum==40)
+		{
+			curLoadNum=100;
+			wBuffer[1] = curLoadNum;			
 		}
 
 	}
