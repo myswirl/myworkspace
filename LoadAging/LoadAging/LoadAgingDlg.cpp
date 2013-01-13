@@ -1416,6 +1416,22 @@ void CLoadAgingDlg::OnButtonTest()
 			g_AllCar[selTab].m_Load[iLoad].m_Channel[1].m_ChnHaveBeenRight=0;
 			g_AllCar[selTab].m_Load[iLoad].m_Channel[2].m_ChnHaveBeenRight=0;
 			g_AllCar[selTab].m_Load[iLoad].m_Channel[3].m_ChnHaveBeenRight=0;
+			g_AllCar[selTab].m_Load[iLoad].m_Channel[0].m_tmpCurrentCount=0;
+			g_AllCar[selTab].m_Load[iLoad].m_Channel[1].m_tmpCurrentCount=0;
+			g_AllCar[selTab].m_Load[iLoad].m_Channel[2].m_tmpCurrentCount=0;
+			g_AllCar[selTab].m_Load[iLoad].m_Channel[3].m_tmpCurrentCount=0;
+			g_AllCar[selTab].m_Load[iLoad].m_Channel[0].m_tmpVoltageCount=0;
+			g_AllCar[selTab].m_Load[iLoad].m_Channel[1].m_tmpVoltageCount=0;
+			g_AllCar[selTab].m_Load[iLoad].m_Channel[2].m_tmpVoltageCount=0;
+			g_AllCar[selTab].m_Load[iLoad].m_Channel[3].m_tmpVoltageCount=0;
+			g_AllCar[selTab].m_Load[iLoad].m_Channel[0].m_AverCurrent=0;
+			g_AllCar[selTab].m_Load[iLoad].m_Channel[1].m_AverCurrent=0;
+			g_AllCar[selTab].m_Load[iLoad].m_Channel[2].m_AverCurrent=0;
+			g_AllCar[selTab].m_Load[iLoad].m_Channel[3].m_AverCurrent=0;
+			g_AllCar[selTab].m_Load[iLoad].m_Channel[0].m_AverVoltage=0;
+			g_AllCar[selTab].m_Load[iLoad].m_Channel[1].m_AverVoltage=0;
+			g_AllCar[selTab].m_Load[iLoad].m_Channel[2].m_AverVoltage=0;
+			g_AllCar[selTab].m_Load[iLoad].m_Channel[3].m_AverVoltage=0;
 
 		}
 		

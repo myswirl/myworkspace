@@ -13,6 +13,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+extern char			cfg_IniName[256];
+
 
 /////////////////////////////////////////////////////////////////////////////
 // LongDlg dialog
@@ -86,8 +88,11 @@ BOOL LongDlg::OnInitDialog()
 	if(g_ValidHour>0 && g_ValidHour!=0xFFFD)//此时临时授权
 	{
 		char tmpStr[64]={0};
-		sprintf(tmpStr,"临时授权,剩余%d小时",g_ValidHour/6);		
-		SetDlgItemText(IDC_STATIC_LOGINRESULT,tmpStr);	
+		//sprintf(tmpStr,"临时授权,剩余%d小时",g_ValidHour/6);		
+		//SetDlgItemText(IDC_STATIC_LOGINRESULT,tmpStr);
+		sprintf(tmpStr, "%d",g_ValidHour/6);
+		WritePrivateProfileString ( "ConfigInfo", "ValidHour", tmpStr, cfg_IniName);
+		
 	}
 	
 

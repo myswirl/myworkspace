@@ -12,7 +12,7 @@ extern CLoadAgingApp theApp;
 CLoadAgingDlg	*pdlg;
 
 // var about LoadAging.ini
-char			cfg_SoftwareVersion[32]="V1.11";					//软件版本标识
+char			cfg_SoftwareVersion[32]="V2.12";					//软件版本标识
 char			cfg_IniName[256] = "";
 char			cfg_IniShortName[] = "\\LoadAging.ini";
 char			cfg_NormalPassword[128]={0};				//技术人员密码
@@ -61,14 +61,14 @@ void	ReadFromConfig(void)
 	cfg_EnableLight = GetPrivateProfileInt ( "ConfigInfo", "EnableLight", 1, cfg_IniName);		//是否使能指示灯
 	
 	cfg_PowerMax = GetPrivateProfileInt ( "ConfigInfo", "PowerMax", 75, cfg_IniName);		//功率上限值，add by lmy 20120613
-
+	
 	cfg_IsDealwithRecvData= GetPrivateProfileInt ( "ConfigInfo", "IsDealwithRecvData", 1, cfg_IniName);					//是否使能数据处理
 	cfg_FixDataPercent = GetPrivateProfileInt ( "ConfigInfo", "FixDataPercent", 3, cfg_IniName);						//界面显示，处理之后的，定值的偏差范围千分之1---3
 	cfg_NoFixDataPercent= GetPrivateProfileInt ( "ConfigInfo", "NoFixDataPercent", 3, cfg_IniName);						//界面显示，处理之后的，非定值的偏差范围千分之1---3
 	cfg_MaxMinErrorPercent= GetPrivateProfileInt ( "ConfigInfo", "MaxMinErrorPercent", 10, cfg_IniName);				//在上下限的允许偏差范围非定值的偏差范围千分之10
 	cfg_CurrentErrorPercent = GetPrivateProfileInt ( "ConfigInfo", "CurrentErrorPercent", 100, cfg_IniName);			//定值电流的允许偏差范围
 	cfg_VoltageErrorPercent = GetPrivateProfileInt ( "ConfigInfo", "VoltageErrorPercent", 100, cfg_IniName);	//定值电压的允许偏差范围
-
+	
 	GetPrivateProfileString ( "ConfigInfo", "NormalPassword", "000000", cfg_NormalPassword, sizeof(cfg_NormalPassword), cfg_IniName);
 	GetPrivateProfileString ( "ConfigInfo", "SuperPassword", "000000", cfg_SuperPassword, sizeof(cfg_SuperPassword), cfg_IniName);
 	GetPrivateProfileString ( "ConfigInfo", "DataRecordPath", "..\\DataRecord\\", cfg_DataRecordPath, sizeof(cfg_DataRecordPath), cfg_IniName);
@@ -92,7 +92,7 @@ void	WriteToConfig(void)
 	WritePrivateProfileString ( "ConfigInfo", "SuperPassword", cfg_SuperPassword, cfg_IniName);
 	WritePrivateProfileString ( "ConfigInfo", "DataRecordPath", cfg_DataRecordPath, cfg_IniName);
 	WritePrivateProfileString ( "ConfigInfo", "SoftwareVersion", cfg_SoftwareVersion, cfg_IniName);
-
+	
 }
 
 /************************************************************************/
@@ -114,7 +114,7 @@ bool InitSystem(void)
 	{
 		pdlg->GetDlgItem(IDC_STATIC_SERPORT_TEST)->ShowWindow(SW_SHOW);	
 		pdlg->SetDlgItemText(IDC_STATIC_SERPORT_TEST,cfg_SoftwareVersion);
-
+		
 	}
 	return true;
 }
@@ -435,7 +435,7 @@ void	ProcessReceiveData( unsigned char* pRecvData, int portNo)
 	char tmpStr[64]={0};
 	char logBuf[512];
 	memset(logBuf,0,sizeof(logBuf));
-
+	
 	//根据串口号定位测试车
 	carID = GetCarIDByPortNo(portNo);	
 	if ( carID < 0 )
@@ -449,7 +449,7 @@ void	ProcessReceiveData( unsigned char* pRecvData, int portNo)
 	EnterCriticalSection(&g_AllCar[g_curSelTestCar].CriticalSectionRecvBuffer);
 	memcpy(g_AllCar[carID].recvData,pRecvData,SERIALPORT_BUFSIZE);
 	LeaveCriticalSection(&g_AllCar[g_curSelTestCar].CriticalSectionRecvBuffer);	
-
+	
 	sprintf(logBuf,"carID:%02d,                     RecvData[%d,%d,%d]    ,",carID,g_AllCar[carID].m_ReadCommandCounter, g_AllCar[carID].m_ReadEventCounter,g_AllCar[carID].m_LostReadEventCounter);
 	for(int i=0;i<SERIALPORT_BUFSIZE;i++)
 	{
@@ -465,9 +465,9 @@ void	ProcessReceiveData( unsigned char* pRecvData, int portNo)
 				g_AllCar[g_curSelTestCar].m_ReadCommandCounter-g_AllCar[g_curSelTestCar].m_ReadEventCounter);
 			pdlg->SetDlgItemText(IDC_STATIC_SERPORT_TEST,tmpStr);
 		}
-
+		
 	}
-
+	
 }
 
 /************************************************************************/
@@ -648,15 +648,15 @@ void RefreshAllLED( int curCarID)
 	{
 		return;
 	}
-// 	if (g_AllCar[curCarID].m_CarState == CAR_STATE_NOIMPORT )
-// 	{
-// 		return;
-// 	}
-// 	if (g_AllCar[curCarID].m_CarState == CAR_STATE_IMPORTED)
-// 	{
-// 		return;
-// 	}
-	 
+	// 	if (g_AllCar[curCarID].m_CarState == CAR_STATE_NOIMPORT )
+	// 	{
+	// 		return;
+	// 	}
+	// 	if (g_AllCar[curCarID].m_CarState == CAR_STATE_IMPORTED)
+	// 	{
+	// 		return;
+	// 	}
+	
 	//循环更新LED灯
 	for(int iLedIndex=0; iLedIndex<MAX_LED_COUNT; iLedIndex++)
 	{
@@ -692,38 +692,38 @@ void RefreshAllLED( int curCarID)
 					Led_GetUnitName(g_AllCar[curCarID].m_Load[loadIndex].m_LoadMode)
 					);
 				break;
-// 			case LOAD_STATE_NOLINK:		//未连接，也就是这个负载的四个通道都没有接电源，黄色
-// 				pdlg->m_LED[iLedIndex].SetOnFgColor(g_ColorSelect);
-// 				sprintf(tmpStr,"位置:第%d层第%d个, 拨码:%d, 通道:%d \n状态:未连接\n设定:%s,%0.3f%s, %0.3f%s~%0.3f%s\n实时:功率= \n电流= , 电压=",
-// 					g_AllCar[curCarID].m_Load[loadIndex].m_LayerID,
-// 					iPerLayer,
-// 					loadIndex+1,
-// 					chnIndex+1,
-// 					Led_GetLoadModeName(g_AllCar[curCarID].m_Load[loadIndex].m_LoadMode),
-// 					g_AllCar[curCarID].m_Load[loadIndex].m_Channel[chnIndex].m_SetValue,
-// 					Led_GetFixedValue(g_AllCar[curCarID].m_Load[loadIndex].m_LoadMode),
-// 					g_AllCar[curCarID].m_Load[loadIndex].m_Channel[chnIndex].m_SetMin,
-// 					Led_GetUnitName(g_AllCar[curCarID].m_Load[loadIndex].m_LoadMode),
-// 					g_AllCar[curCarID].m_Load[loadIndex].m_Channel[chnIndex].m_SetMax,
-// 					Led_GetUnitName(g_AllCar[curCarID].m_Load[loadIndex].m_LoadMode)
-// 					);
-// 				break;
-// 			case LOAD_STATE_NOSETPARAM:	//未设置参数，需要重新设置参数
-// 				pdlg->m_LED[iLedIndex].SetOnFgColor(g_ColorSelect);
-// 				sprintf(tmpStr,"位置:第%d层第%d个, 拨码:%d, 通道:%d \n状态:未设置\n设定:%s,%0.3f%s, %0.3f%s~%0.3f%s\n实时:功率= \n电流= , 电压=",
-// 					g_AllCar[curCarID].m_Load[loadIndex].m_LayerID,
-// 					iPerLayer,
-// 					loadIndex+1,
-// 					chnIndex+1,
-// 					Led_GetLoadModeName(g_AllCar[curCarID].m_Load[loadIndex].m_LoadMode),
-// 					g_AllCar[curCarID].m_Load[loadIndex].m_Channel[chnIndex].m_SetValue,
-// 					Led_GetFixedValue(g_AllCar[curCarID].m_Load[loadIndex].m_LoadMode),
-// 					g_AllCar[curCarID].m_Load[loadIndex].m_Channel[chnIndex].m_SetMin,
-// 					Led_GetUnitName(g_AllCar[curCarID].m_Load[loadIndex].m_LoadMode),
-// 					g_AllCar[curCarID].m_Load[loadIndex].m_Channel[chnIndex].m_SetMax,
-// 					Led_GetUnitName(g_AllCar[curCarID].m_Load[loadIndex].m_LoadMode)
-// 					);
-// 				break;
+				// 			case LOAD_STATE_NOLINK:		//未连接，也就是这个负载的四个通道都没有接电源，黄色
+				// 				pdlg->m_LED[iLedIndex].SetOnFgColor(g_ColorSelect);
+				// 				sprintf(tmpStr,"位置:第%d层第%d个, 拨码:%d, 通道:%d \n状态:未连接\n设定:%s,%0.3f%s, %0.3f%s~%0.3f%s\n实时:功率= \n电流= , 电压=",
+				// 					g_AllCar[curCarID].m_Load[loadIndex].m_LayerID,
+				// 					iPerLayer,
+				// 					loadIndex+1,
+				// 					chnIndex+1,
+				// 					Led_GetLoadModeName(g_AllCar[curCarID].m_Load[loadIndex].m_LoadMode),
+				// 					g_AllCar[curCarID].m_Load[loadIndex].m_Channel[chnIndex].m_SetValue,
+				// 					Led_GetFixedValue(g_AllCar[curCarID].m_Load[loadIndex].m_LoadMode),
+				// 					g_AllCar[curCarID].m_Load[loadIndex].m_Channel[chnIndex].m_SetMin,
+				// 					Led_GetUnitName(g_AllCar[curCarID].m_Load[loadIndex].m_LoadMode),
+				// 					g_AllCar[curCarID].m_Load[loadIndex].m_Channel[chnIndex].m_SetMax,
+				// 					Led_GetUnitName(g_AllCar[curCarID].m_Load[loadIndex].m_LoadMode)
+				// 					);
+				// 				break;
+				// 			case LOAD_STATE_NOSETPARAM:	//未设置参数，需要重新设置参数
+				// 				pdlg->m_LED[iLedIndex].SetOnFgColor(g_ColorSelect);
+				// 				sprintf(tmpStr,"位置:第%d层第%d个, 拨码:%d, 通道:%d \n状态:未设置\n设定:%s,%0.3f%s, %0.3f%s~%0.3f%s\n实时:功率= \n电流= , 电压=",
+				// 					g_AllCar[curCarID].m_Load[loadIndex].m_LayerID,
+				// 					iPerLayer,
+				// 					loadIndex+1,
+				// 					chnIndex+1,
+				// 					Led_GetLoadModeName(g_AllCar[curCarID].m_Load[loadIndex].m_LoadMode),
+				// 					g_AllCar[curCarID].m_Load[loadIndex].m_Channel[chnIndex].m_SetValue,
+				// 					Led_GetFixedValue(g_AllCar[curCarID].m_Load[loadIndex].m_LoadMode),
+				// 					g_AllCar[curCarID].m_Load[loadIndex].m_Channel[chnIndex].m_SetMin,
+				// 					Led_GetUnitName(g_AllCar[curCarID].m_Load[loadIndex].m_LoadMode),
+				// 					g_AllCar[curCarID].m_Load[loadIndex].m_Channel[chnIndex].m_SetMax,
+				// 					Led_GetUnitName(g_AllCar[curCarID].m_Load[loadIndex].m_LoadMode)
+				// 					);
+				// 				break;
 			case LOAD_STATE_NOLINK:
 			case LOAD_STATE_WORKING:	//工作中，此种状态可实时获取数据
 				{
@@ -818,7 +818,7 @@ void RefreshAllLED( int curCarID)
 			//刷新提示框
 			pW=pdlg->GetDlgItem(1400+1+iLedIndex);
 			pdlg->m_tooltip.AddTool(pW,tmpStr); 
-
+			
 		}
 	}
 }
@@ -841,7 +841,7 @@ int	GetSerialPortCommandType(int carID, int loadNum)
 	{
 		if(g_AllCar[carID].m_CMDBeepOnCounter<7)
 		{			
-		
+			
 			for(iLoad=g_AllCar[g_curSelTestCar].testParam.startLoadNum-1; iLoad<g_AllCar[g_curSelTestCar].testParam.endLoadNum; iLoad++)
 			{
 				for( i=0;i<4;i++)//此负载的四个通道有一个出现错误，则下发告警
@@ -881,22 +881,22 @@ int	GetSerialPortCommandType(int carID, int loadNum)
 			g_AllCar[carID].m_CMDLightOnCounter=0;
 		}
 	}
-
-
+	
+	
 	//判断当前测试时间是否到了插入时序中
 	for(int testItemIndex=0;testItemIndex< g_AllCar[carID].testItemNum; testItemIndex++)
 	{
 		int testItem=g_AllCar[carID].pTimeSeires[testItemIndex].testItem;
 		long startTime=g_AllCar[carID].pTimeSeires[testItemIndex].startTime;
 		long testTime=g_AllCar[carID].pTimeSeires[testItemIndex].testTime;
-//		TRACE("carID:%d, timerCounter:%d, testItemIndex:%d, startTime:%d, testTime:%d, testItem:%d\n", 
-//			carID,g_AllCar[carID].m_TimeCounter,testItemIndex, startTime,testTime,testItem);
-
-// 		//插入时序的开始点
-// 		if (g_AllCar[carID].m_TimeCounter*COMMAND_INTERVAL == startTime*1000) 
-// 		{
-// 			return testItem;			
-// 		}
+		//		TRACE("carID:%d, timerCounter:%d, testItemIndex:%d, startTime:%d, testTime:%d, testItem:%d\n", 
+		//			carID,g_AllCar[carID].m_TimeCounter,testItemIndex, startTime,testTime,testItem);
+		
+		// 		//插入时序的开始点
+		// 		if (g_AllCar[carID].m_TimeCounter*COMMAND_INTERVAL == startTime*1000) 
+		// 		{
+		// 			return testItem;			
+		// 		}
 		
 		//插入时序的过程中
 		if (g_AllCar[carID].m_TimeCounter*COMMAND_INTERVAL >= startTime*1000 &&
@@ -981,7 +981,7 @@ void WriteSerialPortCommand(int carID, int serialPortCommandType, int curLoadNum
 	wBuffer[0] = '\x6B';				//开始标记
 	wBuffer[1] = curLoadNum;			//当前负载号
 	wBuffer[38] = '\x6E';				//结束标记
-		
+	
 	switch (serialPortCommandType)
 	{
 	case LOAD_COMMAND_SET:
@@ -1066,63 +1066,63 @@ void WriteSerialPortCommand(int carID, int serialPortCommandType, int curLoadNum
 		}
 		
 		break;
-		case LOAD_COMMAND_READ:
-			g_AllCar[carID].m_CarTestingState = CAR_STATE_TESTING_READ;//测试中状态，Read
-			wBuffer[2] = '\x0D';			//功能码
-			sprintf(logBuf,"carID:%02d, loadID:%02d, LOAD_COMMAND_READ[%d,%d,%d]    ,",
-				carID, curLoadNum,g_AllCar[carID].m_ReadCommandCounter,g_AllCar[carID].m_ReadEventCounter,g_AllCar[carID].m_LostReadEventCounter);
-			break;
-		case LOAD_COMMAND_STOP:
-			sprintf(logBuf,"carID:%02d, loadID:%02d, LOAD_COMMAND_STOP    ,", carID, curLoadNum);
-			wBuffer[2] = '\x0C';			//功能码
-			break;
-		case LOAD_COMMAND_110V_OFF:			//
-			g_AllCar[carID].m_CarTestingState = CAR_STATE_TESTING_110VOFF;//测试中状态
-			sprintf(logBuf,"carID:%02d, loadID:%02d, LOAD_COMMAND_110V_OFF    ,", carID,mainCtrlBoardCommad);
-			wBuffer[1] = mainCtrlBoardCommad;
-			wBuffer[2] = '\x09';			//功能码
-			break;
-		case LOAD_COMMAND_110V_ON:
-			g_AllCar[carID].m_CarTestingState = CAR_STATE_TESTING_110VON;//测试中状态
-			sprintf(logBuf,"carID:%02d, loadID:%02d, LOAD_COMMAND_110V_ON    ,", carID,mainCtrlBoardCommad);
-			wBuffer[1] = mainCtrlBoardCommad;
-			wBuffer[2] = '\x08';			//功能码
-			break;
-		case LOAD_COMMAND_220V_ON:
-			g_AllCar[carID].m_CarTestingState = CAR_STATE_TESTING_220VON;//测试中状态
-			sprintf(logBuf,"carID:%02d, loadID:%02d, LOAD_COMMAND_220V_ON ,", carID,mainCtrlBoardCommad);
-			wBuffer[1] = mainCtrlBoardCommad;
-			wBuffer[2] = '\x06';			//功能码
-			break;
-		case LOAD_COMMAND_220V_OFF:
-			g_AllCar[carID].m_CarTestingState = CAR_STATE_TESTING_220VOFF;//测试中状态
-			sprintf(logBuf,"carID:%02d, loadID:%02d, LOAD_COMMAND_220V_OFF,", carID,mainCtrlBoardCommad);
-			wBuffer[1] = mainCtrlBoardCommad;
-			wBuffer[2] = '\x07';			//功能码
-			break;
-		case LOAD_COMMAND_BEEPON:
-			sprintf(logBuf,"carID:%02d, loadID:%02d, LOAD_COMMAND_BEEPON  ,", carID,mainCtrlBoardCommad);
-			wBuffer[1] = mainCtrlBoardCommad;
-			wBuffer[2] = '\x10';			//功能码
-			break;
-		case LOAD_COMMAND_BEEPOFF:
-			sprintf(logBuf,"carID:%02d, loadID:%02d, LOAD_COMMAND_BEEPOFF ,", carID,mainCtrlBoardCommad);
-			wBuffer[1] = mainCtrlBoardCommad;
-			wBuffer[2] = LOAD_COMMAND_BEEPOFF;			//功能码
-			break;
-		case LOAD_COMMAND_LIGHTON:
-			sprintf(logBuf,"carID:%02d, loadID:%02d, LOAD_COMMAND_LIGHTON ,", carID,mainCtrlBoardCommad);
-			wBuffer[1] = mainCtrlBoardCommad;
-			wBuffer[2] = '\x12';			//功能码
-			break;
-		case LOAD_COMMAND_LIGHTOFF:
-			sprintf(logBuf,"carID:%02d, loadID:%02d, LOAD_COMMAND_LIGHTOFF,", carID,mainCtrlBoardCommad);
-			wBuffer[1] = mainCtrlBoardCommad;
-			wBuffer[2] = LOAD_COMMAND_LIGHTOFF;			//功能码
-			break;
-		default:
-			return;
-			
+	case LOAD_COMMAND_READ:
+		g_AllCar[carID].m_CarTestingState = CAR_STATE_TESTING_READ;//测试中状态，Read
+		wBuffer[2] = '\x0D';			//功能码
+		sprintf(logBuf,"carID:%02d, loadID:%02d, LOAD_COMMAND_READ[%d,%d,%d]    ,",
+			carID, curLoadNum,g_AllCar[carID].m_ReadCommandCounter,g_AllCar[carID].m_ReadEventCounter,g_AllCar[carID].m_LostReadEventCounter);
+		break;
+	case LOAD_COMMAND_STOP:
+		sprintf(logBuf,"carID:%02d, loadID:%02d, LOAD_COMMAND_STOP    ,", carID, curLoadNum);
+		wBuffer[2] = '\x0C';			//功能码
+		break;
+	case LOAD_COMMAND_110V_OFF:			//
+		g_AllCar[carID].m_CarTestingState = CAR_STATE_TESTING_110VOFF;//测试中状态
+		sprintf(logBuf,"carID:%02d, loadID:%02d, LOAD_COMMAND_110V_OFF    ,", carID,mainCtrlBoardCommad);
+		wBuffer[1] = mainCtrlBoardCommad;
+		wBuffer[2] = '\x09';			//功能码
+		break;
+	case LOAD_COMMAND_110V_ON:
+		g_AllCar[carID].m_CarTestingState = CAR_STATE_TESTING_110VON;//测试中状态
+		sprintf(logBuf,"carID:%02d, loadID:%02d, LOAD_COMMAND_110V_ON    ,", carID,mainCtrlBoardCommad);
+		wBuffer[1] = mainCtrlBoardCommad;
+		wBuffer[2] = '\x08';			//功能码
+		break;
+	case LOAD_COMMAND_220V_ON:
+		g_AllCar[carID].m_CarTestingState = CAR_STATE_TESTING_220VON;//测试中状态
+		sprintf(logBuf,"carID:%02d, loadID:%02d, LOAD_COMMAND_220V_ON ,", carID,mainCtrlBoardCommad);
+		wBuffer[1] = mainCtrlBoardCommad;
+		wBuffer[2] = '\x06';			//功能码
+		break;
+	case LOAD_COMMAND_220V_OFF:
+		g_AllCar[carID].m_CarTestingState = CAR_STATE_TESTING_220VOFF;//测试中状态
+		sprintf(logBuf,"carID:%02d, loadID:%02d, LOAD_COMMAND_220V_OFF,", carID,mainCtrlBoardCommad);
+		wBuffer[1] = mainCtrlBoardCommad;
+		wBuffer[2] = '\x07';			//功能码
+		break;
+	case LOAD_COMMAND_BEEPON:
+		sprintf(logBuf,"carID:%02d, loadID:%02d, LOAD_COMMAND_BEEPON  ,", carID,mainCtrlBoardCommad);
+		wBuffer[1] = mainCtrlBoardCommad;
+		wBuffer[2] = '\x10';			//功能码
+		break;
+	case LOAD_COMMAND_BEEPOFF:
+		sprintf(logBuf,"carID:%02d, loadID:%02d, LOAD_COMMAND_BEEPOFF ,", carID,mainCtrlBoardCommad);
+		wBuffer[1] = mainCtrlBoardCommad;
+		wBuffer[2] = LOAD_COMMAND_BEEPOFF;			//功能码
+		break;
+	case LOAD_COMMAND_LIGHTON:
+		sprintf(logBuf,"carID:%02d, loadID:%02d, LOAD_COMMAND_LIGHTON ,", carID,mainCtrlBoardCommad);
+		wBuffer[1] = mainCtrlBoardCommad;
+		wBuffer[2] = '\x12';			//功能码
+		break;
+	case LOAD_COMMAND_LIGHTOFF:
+		sprintf(logBuf,"carID:%02d, loadID:%02d, LOAD_COMMAND_LIGHTOFF,", carID,mainCtrlBoardCommad);
+		wBuffer[1] = mainCtrlBoardCommad;
+		wBuffer[2] = LOAD_COMMAND_LIGHTOFF;			//功能码
+		break;
+	default:
+		return;
+		
 	}
 	//拨码开关0、1、2、10、13、14同时存在时，存在收不到的情况
 	if (serialPortCommandType ==LOAD_COMMAND_SET || 
@@ -1143,9 +1143,9 @@ void WriteSerialPortCommand(int carID, int serialPortCommandType, int curLoadNum
 			wBuffer[1] = curLoadNum;			//负载号2
 		}else if (curLoadNum==3)
 		{
-				curLoadNum=65;
-				wBuffer[1] = curLoadNum;			//负载号3, add by lmy 20120613
-			}else if (curLoadNum==10)
+			curLoadNum=65;
+			wBuffer[1] = curLoadNum;			//负载号3, add by lmy 20120613
+		}else if (curLoadNum==10)
 		{
 			curLoadNum=70;
 			wBuffer[1] = curLoadNum;			
@@ -1162,7 +1162,7 @@ void WriteSerialPortCommand(int carID, int serialPortCommandType, int curLoadNum
 			curLoadNum=100;
 			wBuffer[1] = curLoadNum;			
 		}
-
+		
 	}
 	//串口数据返回超时处理
 	if(serialPortCommandType==LOAD_COMMAND_READ && 
@@ -1175,11 +1175,11 @@ void WriteSerialPortCommand(int carID, int serialPortCommandType, int curLoadNum
 			return;
 		}
 		g_AllCar[carID].m_LostReadEventCounter++;//确定数据丢失了，下发下一个命令
-
+		
 	}
 	g_AllCar[carID].m_LostEventTimer=0;//超时未返回数据计数器
 	g_Ports[carID].WriteToPort(wBuffer);
-
+	
 	if(serialPortCommandType==LOAD_COMMAND_READ)
 	{
 		g_AllCar[carID].m_ReadCommandCounter++;//每台车命令个数统计
@@ -1202,7 +1202,7 @@ bool ChnTestDataCompare(int carID, int loadNum, int iChnIndex)
 	{
 		return existErrorData;
 	}
-
+	
 	//通道状态, 错误统计			
 	if (g_AllCar[carID].m_Load[loadNum-1].m_LoadMode == LOAD_MODE_CC )//恒流
 	{	
@@ -1338,7 +1338,7 @@ bool ChnTestDataCompare(int carID, int loadNum, int iChnIndex)
 		{
 			g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_ChnState = CHN_STATE_OK;//合格
 			g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_ChnHaveBeenRight =1;
-
+			
 		}
 	}
 	return existErrorData;
@@ -1363,100 +1363,271 @@ bool IsMainBoardCommand(int funcNum)
 	}
 	return false;
 }
-
+void BubbleSort( float *L){
+    // 对顺序表L作起泡排序
+    bool change = true;
+    for (int i=9; i>1 && change; --i){
+        change = false;
+        for(int j=1; j<i; ++j){
+            if(L[j] - L[j+1] > EPSINON ){ 
+                L[0] = L[j];
+                L[j] = L[j+1];
+                L[j+1] = L[0];
+                change = true;
+            }// end if
+        }// end for
+    }// end for
+}
+//求获取的10个电流值的平均值
+float GetAverageCurrent(int carID, int loadNum, int iChnIndex)
+{
+	char tmpStr[512];
+	float result;
+	sprintf(tmpStr,"carID:%d, loadNum:%d, iChnIndex:%d, m[0]:%f,m[1]:%f,m[2]:%f,m[3]:%f, m[4]:%f, m[5]:%f, m[6]:%f, m[7]:%f, m[8]:%f, m[9]:%f \n",
+		carID, 
+		loadNum,
+		iChnIndex,
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrent[0],
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrent[1],
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrent[2],
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrent[3],
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrent[4],
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrent[5],
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrent[6],
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrent[7],
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrent[8],
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrent[9]);
+	WriteLog(LEVEL_DEBUG,tmpStr);
+	BubbleSort(g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrent);
+	result =g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrent[2]+\
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrent[3]+\
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrent[4]+\
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrent[5]+\
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrent[6]+\
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrent[7]+\
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrent[8];
+	result = result/7;
+	sprintf(tmpStr,"carID:%d, loadNum:%d, iChnIndex:%d, m[0]:%f,m[1]:%f,m[2]:%f,m[3]:%f, m[4]:%f, m[5]:%f, m[6]:%f, m[7]:%f, m[8]:%f, m[9]:%f, averageCurrent:%f \n",
+		carID, 
+		loadNum,
+		iChnIndex,
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrent[0],
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrent[1],
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrent[2],
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrent[3],
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrent[4],
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrent[5],
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrent[6],
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrent[7],
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrent[8],
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrent[9],
+		result);
+	WriteLog(LEVEL_DEBUG,tmpStr);
+	return result;
+}
+//求获取的10个电压值的平均值
+float GetAverageVoltage(int carID, int loadNum, int iChnIndex)
+{
+	char tmpStr[512];
+	float result;
+	BubbleSort(g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpVoltage);
+	result =	g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpVoltage[2]+\
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpVoltage[3]+\
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpVoltage[4]+\
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpVoltage[5]+\
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpVoltage[6]+\
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpVoltage[7]+\
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpVoltage[8];
+	result = result/7;
+	sprintf(tmpStr,"carID:%d, loadNum:%d, iChnIndex:%d, m[0]:%f,m[1]:%f,m[2]:%f,m[3]:%f, m[4]:%f, m[5]:%f, m[6]:%f, m[7]:%f, m[8]:%f, m[9]:%f, averageVoltage:%f \n",
+		carID, 
+		loadNum,
+		iChnIndex,
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpVoltage[0],
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpVoltage[1],
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpVoltage[2],
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpVoltage[3],
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpVoltage[4],
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpVoltage[5],
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpVoltage[6],
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpVoltage[7],
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpVoltage[8],
+		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpVoltage[9],
+		result);
+	WriteLog(LEVEL_DEBUG,tmpStr);
+	return result;
+}
 //对当前获取到的电压数据进行处理，返回值-1表示不处理，返回多少就显示多少
 float DealWithSerialPortData_NowVoltage(int carID, int loadNum, int iChnIndex, float nowVoltage)
 {
 	//当 恒压测试， 电压定值在10%波动，电流在上下限15%波动，这时显示的值更改为 电压值在正负千分之1-千分之3波动，电流值在正负1%-3%波动；
 	//当 恒流测试， 电流定值在10%波动，电压在上下限15%波动，这时显示的值更改为 电流值在正负千分之1-千分之3波动，电压值在正负1%-3%波动；
-
+	
     int randomNum_percent_begin = 1;
 	int randomNum_percent=1;//随机产生的偏差百分比，1-3%
 	
 	int randomNum_oddeven_begin = 1;//随机产生的odd even，1 or 2
 	int randomNum_oddeven_end = 2;//随机产生的odd even，1 or 2
 	int randomNum_oddeven = 1;//随机产生的odd even，1 or 2
-
+	
 	char tmpStr[256];
 	memset(tmpStr, 0, sizeof(tmpStr));
-
-/*	sprintf(tmpStr,"NowVoltage(), cfg_IsDealwithRecvData:%d, carID:%d, loadNum:%d, iChnIndex:%d, nowVoltage:%f, m_ParaMode:%d, m_LoadMode:%d, m_SetValue:%f, m_SetMin:%f, m_SetMax:%f\n ", 
-		cfg_IsDealwithRecvData,
-		carID,
-		loadNum,
-		iChnIndex,
-		nowVoltage,
-		g_AllCar[carID].m_Load[loadNum-1].m_ParaMode,
-		g_AllCar[carID].m_Load[loadNum-1].m_LoadMode,
-		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue,
-		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin,
-		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax);
+	
+	/*	sprintf(tmpStr,"NowVoltage(), cfg_IsDealwithRecvData:%d, carID:%d, loadNum:%d, iChnIndex:%d, nowVoltage:%f, m_ParaMode:%d, m_LoadMode:%d, m_SetValue:%f, m_SetMin:%f, m_SetMax:%f\n ", 
+	cfg_IsDealwithRecvData,
+	carID,
+	loadNum,
+	iChnIndex,
+	nowVoltage,
+	g_AllCar[carID].m_Load[loadNum-1].m_ParaMode,
+	g_AllCar[carID].m_Load[loadNum-1].m_LoadMode,
+	g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue,
+	g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin,
+	g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax);
 	WriteLog(LEVEL_DEBUG,tmpStr);*/
 	
 	if( nowVoltage == 0)
 	{
 		return -1;
 	}
-
+	
 	if (cfg_IsDealwithRecvData == 0)
 	{
 		return -1;
 	}
-	
-	
-	if (g_AllCar[carID].m_Load[loadNum-1].m_ParaMode == 0 && g_AllCar[carID].m_Load[loadNum-1].m_LoadMode == LOAD_MODE_CC )//当前传入电压值，恒流测试,单路测试
-	{	
-		//上下限偏差判断
-		if ((nowVoltage - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin * (( 1000.0 -cfg_MaxMinErrorPercent )/1000.0) ) < EPSINON)
-		{
-			return -1;
-		}
-		if ((nowVoltage - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax * (( 1000.0 +cfg_MaxMinErrorPercent )/1000.0) ) > EPSINON)
-		{
-			return -1;
-		}
-		//如果当前电压值在当前上下限的 15%误差内
-		//未超出设定值，则在 设定值的 正负千分之1-10 波动
-		srand((unsigned)time(NULL));
-		randomNum_percent = randomNum_percent_begin+rand()%cfg_NoFixDataPercent;
-		
-		srand((unsigned)time(NULL));
-		randomNum_oddeven = randomNum_oddeven_begin+rand()%randomNum_oddeven_end;
-		
-		if (randomNum_oddeven == 1)
-		{
-			return (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin+g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax)/2*(1000.0+randomNum_percent)/1000.0;
-		}else
-		{
-			return (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin+g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax)/2*(1000.0-randomNum_percent)/1000.0;
-		}
-
-	}else if (g_AllCar[carID].m_Load[loadNum-1].m_ParaMode == 0 && g_AllCar[carID].m_Load[loadNum-1].m_LoadMode == LOAD_MODE_CV )//当前传入电压值，恒压，单路测试
+	if (cfg_IsDealwithRecvData == 2 ) //第二种处理数据方式，20s后，取10次平均值
 	{
-		//cfg_VoltageErrorPercent定值电压的偏差范围百分比
-		if ((nowVoltage - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue * (( 1000.0 +cfg_VoltageErrorPercent )/1000.0) ) > EPSINON)
+		if(g_AllCar[carID].m_TimeCounter>200 && nowVoltage>0 && g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpVoltageCount<10)
 		{
-			return -1; //超出设定值的百分之十
-		}
-		if ((nowVoltage - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue * (( 1000.0 -cfg_VoltageErrorPercent )/1000.0) ) < EPSINON)
-		{
-			return -1;//超出设定值的百分之十
-		}
-		//未超出设定值，则在 设定值的 正负千分之1-3 波动
-		srand((unsigned)time(NULL));
-		randomNum_percent = randomNum_percent_begin+rand()%cfg_FixDataPercent;
+			g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpVoltage[g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpVoltageCount] = nowVoltage;
+			sprintf(tmpStr,"carID:%d, loadNum:%d, iChnIndex:%d, m_tmpVoltage[%d]:%f \n",
+				carID, loadNum, iChnIndex,g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpVoltageCount, nowVoltage);
+			WriteLog(LEVEL_DEBUG,tmpStr);
 
-		srand((unsigned)time(NULL));
-		randomNum_oddeven = randomNum_oddeven_begin+rand()%randomNum_oddeven_end;
-
-		if (randomNum_oddeven == 1)
-		{
-			return g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue*(1000.0+randomNum_percent)/1000.0;
-		}else
-		{
-			return g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue*(1000.0-randomNum_percent)/1000.0;
+			g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpVoltageCount++;
 		}
-
+		
+		if( 10 == g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpVoltageCount && g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_AverVoltage == 0 )
+		{
+			g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_AverVoltage = GetAverageVoltage(carID, loadNum, iChnIndex);	
+		}
+		if(g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_AverVoltage==0)
+		{
+			return -1;
+		}
+		if (g_AllCar[carID].m_Load[loadNum-1].m_ParaMode == 0 && g_AllCar[carID].m_Load[loadNum-1].m_LoadMode == LOAD_MODE_CC )//当前传入电压值，恒流测试,单路测试
+		{	
+			//上下限偏差判断
+			if ((nowVoltage - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin * (( 1000.0 -cfg_MaxMinErrorPercent )/1000.0) ) < EPSINON)
+			{
+				return -1;
+			}
+			if ((nowVoltage - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax * (( 1000.0 +cfg_MaxMinErrorPercent )/1000.0) ) > EPSINON)
+			{
+				return -1;
+			}
+			//如果当前电压值在当前上下限的 15%误差内
+			//未超出设定值，则在 设定值的 正负千分之1-10 波动
+			srand((unsigned)time(NULL));
+			randomNum_percent = randomNum_percent_begin+rand()%cfg_NoFixDataPercent;
+			
+			srand((unsigned)time(NULL));
+			randomNum_oddeven = randomNum_oddeven_begin+rand()%randomNum_oddeven_end;
+			
+			if (randomNum_oddeven == 1)
+			{
+				return g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_AverVoltage*(1000.0+randomNum_percent)/1000.0;
+			}else
+			{
+				return g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_AverVoltage*(1000.0-randomNum_percent)/1000.0;
+			}
+			
+		}else if (g_AllCar[carID].m_Load[loadNum-1].m_ParaMode == 0 && g_AllCar[carID].m_Load[loadNum-1].m_LoadMode == LOAD_MODE_CV )//当前传入电压值，恒压，单路测试
+		{
+			//cfg_VoltageErrorPercent定值电压的偏差范围百分比
+			if ((nowVoltage - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue * (( 1000.0 +cfg_VoltageErrorPercent )/1000.0) ) > EPSINON)
+			{
+				return -1; //超出设定值的百分之十
+			}
+			if ((nowVoltage - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue * (( 1000.0 -cfg_VoltageErrorPercent )/1000.0) ) < EPSINON)
+			{
+				return -1;//超出设定值的百分之十
+			}
+			//未超出设定值，则在 设定值的 正负千分之1-3 波动
+			srand((unsigned)time(NULL));
+			randomNum_percent = randomNum_percent_begin+rand()%cfg_FixDataPercent;
+			
+			srand((unsigned)time(NULL));
+			randomNum_oddeven = randomNum_oddeven_begin+rand()%randomNum_oddeven_end;
+			
+			if (randomNum_oddeven == 1)
+			{
+				return g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue*(1000.0+randomNum_percent)/1000.0;
+			}else
+			{
+				return g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue*(1000.0-randomNum_percent)/1000.0;
+			}
+			
+		}
+		
+		return -1;
+	}
+	if (cfg_IsDealwithRecvData == 1 ) //第1种处理数据方式
+	{
+		if (g_AllCar[carID].m_Load[loadNum-1].m_ParaMode == 0 && g_AllCar[carID].m_Load[loadNum-1].m_LoadMode == LOAD_MODE_CC )//当前传入电压值，恒流测试,单路测试
+		{	
+			//上下限偏差判断
+			if ((nowVoltage - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin * (( 1000.0 -cfg_MaxMinErrorPercent )/1000.0) ) < EPSINON)
+			{
+				return -1;
+			}
+			if ((nowVoltage - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax * (( 1000.0 +cfg_MaxMinErrorPercent )/1000.0) ) > EPSINON)
+			{
+				return -1;
+			}
+			//如果当前电压值在当前上下限的 15%误差内
+			//未超出设定值，则在 设定值的 正负千分之1-10 波动
+			srand((unsigned)time(NULL));
+			randomNum_percent = randomNum_percent_begin+rand()%cfg_NoFixDataPercent;
+			
+			srand((unsigned)time(NULL));
+			randomNum_oddeven = randomNum_oddeven_begin+rand()%randomNum_oddeven_end;
+			
+			if (randomNum_oddeven == 1)
+			{
+				return (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin+g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax)/2*(1000.0+randomNum_percent)/1000.0;
+			}else
+			{
+				return (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin+g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax)/2*(1000.0-randomNum_percent)/1000.0;
+			}
+			
+		}else if (g_AllCar[carID].m_Load[loadNum-1].m_ParaMode == 0 && g_AllCar[carID].m_Load[loadNum-1].m_LoadMode == LOAD_MODE_CV )//当前传入电压值，恒压，单路测试
+		{
+			//cfg_VoltageErrorPercent定值电压的偏差范围百分比
+			if ((nowVoltage - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue * (( 1000.0 +cfg_VoltageErrorPercent )/1000.0) ) > EPSINON)
+			{
+				return -1; //超出设定值的百分之十
+			}
+			if ((nowVoltage - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue * (( 1000.0 -cfg_VoltageErrorPercent )/1000.0) ) < EPSINON)
+			{
+				return -1;//超出设定值的百分之十
+			}
+			//未超出设定值，则在 设定值的 正负千分之1-3 波动
+			srand((unsigned)time(NULL));
+			randomNum_percent = randomNum_percent_begin+rand()%cfg_FixDataPercent;
+			
+			srand((unsigned)time(NULL));
+			randomNum_oddeven = randomNum_oddeven_begin+rand()%randomNum_oddeven_end;
+			
+			if (randomNum_oddeven == 1)
+			{
+				return g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue*(1000.0+randomNum_percent)/1000.0;
+			}else
+			{
+				return g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue*(1000.0-randomNum_percent)/1000.0;
+			}
+			
+		}
 	}
 	return -1;
 }
@@ -1473,19 +1644,19 @@ float DealWithSerialPortData_NowCurrent(int carID, int loadNum, int iChnIndex, f
 	char tmpStr[256];
 	memset(tmpStr, 0, sizeof(tmpStr));
 	
-	sprintf(tmpStr,"NowVoltage(), cfg_IsDealwithRecvData:%d, carID:%d, loadNum:%d, iChnIndex:%d, nowCurrent:%f, m_ParaMode:%d, m_LoadMode:%d, m_SetValue:%f, m_SetMin:%f, m_SetMax:%f\n ", 
-		cfg_IsDealwithRecvData,
-		carID,
-		loadNum,
-		iChnIndex,
-		nowCurrent,
-		g_AllCar[carID].m_Load[loadNum-1].m_ParaMode,
-		g_AllCar[carID].m_Load[loadNum-1].m_LoadMode,
-		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue,
-		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin,
-		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax);
-	WriteLog(LEVEL_DEBUG,tmpStr);
-		
+	/*	sprintf(tmpStr,"NowVoltage(), cfg_IsDealwithRecvData:%d, carID:%d, loadNum:%d, iChnIndex:%d, nowCurrent:%f, m_ParaMode:%d, m_LoadMode:%d, m_SetValue:%f, m_SetMin:%f, m_SetMax:%f\n ", 
+	cfg_IsDealwithRecvData,
+	carID,
+	loadNum,
+	iChnIndex,
+	nowCurrent,
+	g_AllCar[carID].m_Load[loadNum-1].m_ParaMode,
+	g_AllCar[carID].m_Load[loadNum-1].m_LoadMode,
+	g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue,
+	g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin,
+	g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax);
+	WriteLog(LEVEL_DEBUG,tmpStr);*/
+	
 	if( nowCurrent == 0)
 	{
 		return -1;
@@ -1494,59 +1665,137 @@ float DealWithSerialPortData_NowCurrent(int carID, int loadNum, int iChnIndex, f
 	{
 		return -1;
 	}
-	if (g_AllCar[carID].m_Load[loadNum-1].m_ParaMode == 0 && g_AllCar[carID].m_Load[loadNum-1].m_LoadMode == LOAD_MODE_CV )//当前传入电流值，恒压， 单路测试
-	{	
-		//上下限偏差判断
-		if ((nowCurrent - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin * (( 1000.0 -cfg_MaxMinErrorPercent )/1000.0) ) < EPSINON)
-		{
-			return -1;
-		}
-		if ((nowCurrent - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax * (( 1000.0 +cfg_MaxMinErrorPercent )/1000.0) ) > EPSINON)
-		{
-			return -1;
-		}
-		//如果当前电压值在当前上下限的 15%误差内
-		//未超出设定值，则在 设定值的 正负千分之1-10 波动
-		srand((unsigned)time(NULL));
-		randomNum_percent = randomNum_percent_begin+rand()%cfg_NoFixDataPercent;
-		
-		srand((unsigned)time(NULL));
-		randomNum_oddeven = randomNum_oddeven_begin+rand()%randomNum_oddeven_end;
-		
-		if (randomNum_oddeven == 1)
-		{
-			return (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin+g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax)/2*(1000.0+randomNum_percent)/1000.0;
-		}else
-		{
-			return (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin+g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax)/2*(1000.0-randomNum_percent)/1000.0;
-		}
-		
-	}else if (g_AllCar[carID].m_Load[loadNum-1].m_ParaMode == 0 && g_AllCar[carID].m_Load[loadNum-1].m_LoadMode == LOAD_MODE_CC )//当前传入电流值，恒流,单路测试
+	if (cfg_IsDealwithRecvData == 2 ) //第二种处理数据方式，20s后，取10次平均值
 	{
-		//定值电流的偏差范围cfg_CurrentErrorPercent
-		if ((nowCurrent - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue * (( 1000.0 +cfg_CurrentErrorPercent )/1000.0) ) > EPSINON)
+		if(g_AllCar[carID].m_TimeCounter>200 && nowCurrent>0 && g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrentCount<10)
 		{
-			return -1; //超出设定值的百分之十
-		}
-		if ((nowCurrent - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue * (( 1000.0 -cfg_CurrentErrorPercent )/1000.0) ) < EPSINON)
-		{
-			return -1;//超出设定值的百分之十
-		}
-		//未超出设定值，则在 设定值的 正负千分之1-3 波动
-		srand((unsigned)time(NULL));
-		randomNum_percent = randomNum_percent_begin+rand()%cfg_FixDataPercent;
-		
-		srand((unsigned)time(NULL));
-		randomNum_oddeven = randomNum_oddeven_begin+rand()%randomNum_oddeven_end;
-		
-		if (randomNum_oddeven == 1)
-		{
-			return g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue*(1000.0+randomNum_percent)/1000.0;
-		}else
-		{
-			return g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue*(1000.0-randomNum_percent)/1000.0;
+			g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrent[g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrentCount] = nowCurrent;
+			sprintf(tmpStr,"carID:%d, loadNum:%d, iChnIndex:%d, m_tmpCurrent[%d]:%f \n",
+				carID, loadNum, iChnIndex,g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrentCount, nowCurrent);
+			WriteLog(LEVEL_DEBUG,tmpStr);
+
+			g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrentCount++;
 		}
 		
+		if( 10 == g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_tmpCurrentCount && g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_AverCurrent == 0 )
+		{
+			g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_AverCurrent = GetAverageCurrent(carID, loadNum, iChnIndex);	
+		}
+		if(g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_AverCurrent == 0 )
+		{
+			return -1;
+		}
+		if (g_AllCar[carID].m_Load[loadNum-1].m_ParaMode == 0 && g_AllCar[carID].m_Load[loadNum-1].m_LoadMode == LOAD_MODE_CV )//当前传入电流值，恒压， 单路测试
+		{	
+			//上下限偏差判断
+			if ((nowCurrent - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin * (( 1000.0 -cfg_MaxMinErrorPercent )/1000.0) ) < EPSINON)
+			{
+				return -1;
+			}
+			if ((nowCurrent - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax * (( 1000.0 +cfg_MaxMinErrorPercent )/1000.0) ) > EPSINON)
+			{
+				return -1;
+			}
+			//如果当前电压值在当前上下限的 15%误差内
+			//未超出设定值，则在 设定值的 正负千分之1-10 波动
+			srand((unsigned)time(NULL));
+			randomNum_percent = randomNum_percent_begin+rand()%cfg_NoFixDataPercent;
+			
+			srand((unsigned)time(NULL));
+			randomNum_oddeven = randomNum_oddeven_begin+rand()%randomNum_oddeven_end;
+			
+			if (randomNum_oddeven == 1)
+			{
+				return g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_AverCurrent*(1000.0+randomNum_percent)/1000.0;
+			}else
+			{
+				return g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_AverCurrent*(1000.0-randomNum_percent)/1000.0;
+			}
+			
+		}else if (g_AllCar[carID].m_Load[loadNum-1].m_ParaMode == 0 && g_AllCar[carID].m_Load[loadNum-1].m_LoadMode == LOAD_MODE_CC )//当前传入电流值，恒流,单路测试
+		{
+			//定值电流的偏差范围cfg_CurrentErrorPercent
+			if ((nowCurrent - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue * (( 1000.0 +cfg_CurrentErrorPercent )/1000.0) ) > EPSINON)
+			{
+				return -1; //超出设定值的百分之十
+			}
+			if ((nowCurrent - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue * (( 1000.0 -cfg_CurrentErrorPercent )/1000.0) ) < EPSINON)
+			{
+				return -1;//超出设定值的百分之十
+			}
+			//未超出设定值，则在 设定值的 正负千分之1-3 波动
+			srand((unsigned)time(NULL));
+			randomNum_percent = randomNum_percent_begin+rand()%cfg_FixDataPercent;
+			
+			srand((unsigned)time(NULL));
+			randomNum_oddeven = randomNum_oddeven_begin+rand()%randomNum_oddeven_end;
+			
+			if (randomNum_oddeven == 1)
+			{
+				return g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue*(1000.0+randomNum_percent)/1000.0;
+			}else
+			{
+				return g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue*(1000.0-randomNum_percent)/1000.0;
+			}
+			
+		}
+	}
+	if (cfg_IsDealwithRecvData == 1 ) //第1种处理数据方式
+	{
+		if (g_AllCar[carID].m_Load[loadNum-1].m_ParaMode == 0 && g_AllCar[carID].m_Load[loadNum-1].m_LoadMode == LOAD_MODE_CV )//当前传入电流值，恒压， 单路测试
+		{	
+			//上下限偏差判断
+			if ((nowCurrent - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin * (( 1000.0 -cfg_MaxMinErrorPercent )/1000.0) ) < EPSINON)
+			{
+				return -1;
+			}
+			if ((nowCurrent - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax * (( 1000.0 +cfg_MaxMinErrorPercent )/1000.0) ) > EPSINON)
+			{
+				return -1;
+			}
+			//如果当前电压值在当前上下限的 15%误差内
+			//未超出设定值，则在 设定值的 正负千分之1-10 波动
+			srand((unsigned)time(NULL));
+			randomNum_percent = randomNum_percent_begin+rand()%cfg_NoFixDataPercent;
+			
+			srand((unsigned)time(NULL));
+			randomNum_oddeven = randomNum_oddeven_begin+rand()%randomNum_oddeven_end;
+			
+			if (randomNum_oddeven == 1)
+			{
+				return (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin+g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax)/2*(1000.0+randomNum_percent)/1000.0;
+			}else
+			{
+				return (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin+g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax)/2*(1000.0-randomNum_percent)/1000.0;
+			}
+			
+		}else if (g_AllCar[carID].m_Load[loadNum-1].m_ParaMode == 0 && g_AllCar[carID].m_Load[loadNum-1].m_LoadMode == LOAD_MODE_CC )//当前传入电流值，恒流,单路测试
+		{
+			//定值电流的偏差范围cfg_CurrentErrorPercent
+			if ((nowCurrent - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue * (( 1000.0 +cfg_CurrentErrorPercent )/1000.0) ) > EPSINON)
+			{
+				return -1; //超出设定值的百分之十
+			}
+			if ((nowCurrent - g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue * (( 1000.0 -cfg_CurrentErrorPercent )/1000.0) ) < EPSINON)
+			{
+				return -1;//超出设定值的百分之十
+			}
+			//未超出设定值，则在 设定值的 正负千分之1-3 波动
+			srand((unsigned)time(NULL));
+			randomNum_percent = randomNum_percent_begin+rand()%cfg_FixDataPercent;
+			
+			srand((unsigned)time(NULL));
+			randomNum_oddeven = randomNum_oddeven_begin+rand()%randomNum_oddeven_end;
+			
+			if (randomNum_oddeven == 1)
+			{
+				return g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue*(1000.0+randomNum_percent)/1000.0;
+			}else
+			{
+				return g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue*(1000.0-randomNum_percent)/1000.0;
+			}
+			
+		}
 	}
 	return -1;
 }
@@ -1601,7 +1850,7 @@ void	DealWithSerialPortData(int carID)
 		LeaveCriticalSection(&g_AllCar[g_curSelTestCar].CriticalSectionRecvBuffer);
 		return;
 	}
-
+	
 	//判断是否主板命令
 	if(IsMainBoardCommand(funNum))
 	{		
@@ -1701,8 +1950,8 @@ void	DealWithSerialPortData(int carID)
 			//对当前获取到的电压数据进行处理
 			ret = -1;
 			ret = DealWithSerialPortData_NowVoltage(carID, loadNum, iChnIndex, C);
-//			sprintf(logBuf,"NowVoltage, cardID:%d, loadNum:%d, iChnIndex:%d, C:%f, ret:%f", carID, loadNum, iChnIndex, C, ret);
-//			WriteLog(LEVEL_DEBUG,logBuf);
+			//			sprintf(logBuf,"NowVoltage, cardID:%d, loadNum:%d, iChnIndex:%d, C:%f, ret:%f", carID, loadNum, iChnIndex, C, ret);
+			//			WriteLog(LEVEL_DEBUG,logBuf);
 			if (ret == -1)
 			{
 				g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowVoltage = C;
@@ -1713,8 +1962,8 @@ void	DealWithSerialPortData(int carID)
 			//对当前获取到的电流数据进行处理
 			ret = -1;
 			ret = DealWithSerialPortData_NowCurrent(carID, loadNum, iChnIndex, F);
-			sprintf(logBuf,"NowCurrent, cardID:%d, loadNum:%d, iChnIndex:%d, F:%f, ret:%f", carID, loadNum, iChnIndex, F, ret);
-			WriteLog(LEVEL_DEBUG,logBuf);
+		//	sprintf(logBuf,"NowCurrent, cardID:%d, loadNum:%d, iChnIndex:%d, F:%f, ret:%f", carID, loadNum, iChnIndex, F, ret);
+		//	WriteLog(LEVEL_DEBUG,logBuf);
 			if (ret == -1)
 			{
 				g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowCurrent = F;
@@ -1722,7 +1971,7 @@ void	DealWithSerialPortData(int carID)
 			{
 				g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowCurrent = ret;
 			}
-						
+			
 		}
 	}
 	//通道[0,3]的错误状态统计
@@ -1817,7 +2066,7 @@ void	DealWithSerialPortData(int carID)
 	EnterCriticalSection(&g_AllCar[g_curSelTestCar].CriticalSectionRecvBuffer);
 	memset(g_AllCar[carID].recvData,0,sizeof(g_AllCar[carID].recvData));
 	LeaveCriticalSection(&g_AllCar[g_curSelTestCar].CriticalSectionRecvBuffer);
-
+	
 }
 
 /************************************************************************/
@@ -1828,7 +2077,7 @@ void	SaveCurrentLoadTestData(int carID, int loadNum)
 	char logBuf[256]={0};
 	memset(logBuf,0,sizeof(logBuf));
 	
-
+	
 	g_data[carID].WriteData_Ttime("");
 	if (g_AllCar[carID].m_Load[loadNum-1].m_ParaMode == 0)
 	{
@@ -1846,7 +2095,7 @@ void	SaveCurrentLoadTestData(int carID, int loadNum)
 			g_AllCar[carID].m_Load[loadNum-1].m_Channel[3].m_NowVoltage,
 			g_AllCar[carID].m_Load[loadNum-1].m_Channel[3].m_NowCurrent,
 			GetChnStateName(g_AllCar[carID].m_Load[loadNum-1].m_Channel[3].m_ChnState));
-	
+		
 	}else if (g_AllCar[carID].m_Load[loadNum-1].m_ParaMode == 1)
 	{
 		sprintf(logBuf,"%d,%0.3f,%0.3f,%s,,,,%0.3f,%0.3f,%s,,, \n",
@@ -1857,8 +2106,8 @@ void	SaveCurrentLoadTestData(int carID, int loadNum)
 			g_AllCar[carID].m_Load[loadNum-1].m_Channel[2].m_NowVoltage,
 			g_AllCar[carID].m_Load[loadNum-1].m_Channel[2].m_NowCurrent,
 			GetChnStateName(g_AllCar[carID].m_Load[loadNum-1].m_Channel[2].m_ChnState));
-	
-
+		
+		
 	}else if (g_AllCar[carID].m_Load[loadNum-1].m_ParaMode == 2)
 	{
 		sprintf(logBuf,"%d,%0.3f,%0.3f,%s,,,,,,,,,\n",
@@ -1866,7 +2115,7 @@ void	SaveCurrentLoadTestData(int carID, int loadNum)
 			g_AllCar[carID].m_Load[loadNum-1].m_Channel[0].m_NowVoltage,
 			g_AllCar[carID].m_Load[loadNum-1].m_Channel[0].m_NowCurrent,
 			GetChnStateName(g_AllCar[carID].m_Load[loadNum-1].m_Channel[0].m_ChnState));
-	
+		
 	}
 				
 	g_data[carID].WriteData(logBuf);
@@ -1890,7 +2139,7 @@ void	SaveTestData(int carID)
 	{
 		return;
 	}
-
+	
 	if (g_AllCar[carID].m_CarState != CAR_STATE_TESTING)
 	{
 		return;
@@ -1931,8 +2180,8 @@ void	Proc_MutilMediaTimer(int carID,DWORD dwUser)
 	
 	memset(tmpStr,0,sizeof(tmpStr));
 	memset(logBuf,0,sizeof(logBuf));
-
-
+	
+	
 	
 	
 	//分析串口数据
@@ -1941,7 +2190,7 @@ void	Proc_MutilMediaTimer(int carID,DWORD dwUser)
 	//保存测试数据
 	SaveTestData(carID);
 	
-		//点击CLEAR后,下发BEEPOFF
+	//点击CLEAR后,下发BEEPOFF
 	if(g_AllCar[carID].m_CMDBeepClear==1)
 	{
 		g_AllCar[g_curSelTestCar].m_CMDBeepOffCounter++;
@@ -2045,11 +2294,11 @@ void	Proc_MutilMediaTimer(int carID,DWORD dwUser)
 		Sleep(300);	
 		WriteSerialPortCommand(carID, LOAD_COMMAND_STOP, 64);	//下发串口命令，停止测试
 		WriteSerialPortCommand(carID, LOAD_COMMAND_STOP, 64);	//下发串口命令，停止测试
-
+		
 		Sleep(300);
 		WriteSerialPortCommand(carID, LOAD_COMMAND_STOP, 64);	//下发串口命令，停止测试
 		WriteSerialPortCommand(carID, LOAD_COMMAND_STOP, 64);	//下发串口命令，停止测试
-
+		
 		Sleep(300);//此命令不需要返回
 		WriteSerialPortCommand(carID, LOAD_COMMAND_STOP, 64);	//下发串口命令，停止测试
 		WriteSerialPortCommand(carID, LOAD_COMMAND_STOP, 64);	//下发串口命令，停止测试

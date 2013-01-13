@@ -111,8 +111,13 @@ typedef	struct
 	int			m_ChnState;				//通道的状态，未连接，合格，欠压，过压，欠流，过流
 	int			m_ChnHaveBeenError;		//出现过Error data
 	int			m_ChnHaveBeenRight;		//正确过Right data
+	int         m_tmpCurrentCount;	//保存电流值数据计数
+	int			m_tmpVoltageCount;	//保存电压值数据计数
 	float		m_NowCurrent;			//获取的当前电流值
 	float		m_NowVoltage;			//获取的当前电压值
+	float		m_tmpCurrent[16];			//获取的当前电流值
+	float		m_tmpVoltage[16];			//获取的当前电压值
+
 	float		m_AverCurrent;			//获取的平均电流值
 	float		m_AverVoltage;			//获取的平均电压值
 	float		m_SetValue;				//定值电压、定值电流
