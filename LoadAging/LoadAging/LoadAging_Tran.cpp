@@ -12,7 +12,7 @@ extern CLoadAgingApp theApp;
 CLoadAgingDlg	*pdlg;
 
 // var about LoadAging.ini
-char			cfg_SoftwareVersion[32]="V1.10";					//软件版本标识
+char			cfg_SoftwareVersion[32]="V1.11";					//软件版本标识
 char			cfg_IniName[256] = "";
 char			cfg_IniShortName[] = "\\LoadAging.ini";
 char			cfg_NormalPassword[128]={0};				//技术人员密码
@@ -991,23 +991,33 @@ void WriteSerialPortCommand(int carID, int serialPortCommandType, int curLoadNum
 		//二路并联
 		if (1 == g_AllCar[carID].m_Load[curLoadNum-1].m_ParaMode && 0 == g_AllCar[carID].m_Load[curLoadNum-1].m_LoadMode)
 		{
-			setValue = (int)(g_AllCar[carID].m_Load[curLoadNum-1].m_Channel[0].m_SetValue*25.5/2);
-			wBuffer[5] = (char)setValue;
-			wBuffer[13] = (char)setValue;
+			setValue = (int)(g_AllCar[carID].m_Load[curLoadNum-1].m_Channel[0].m_SetValue*2000/2);
+			wBuffer[4] = (setValue&0xFF00)>>8;
+			wBuffer[5] = (char)(setValue&0x00FF);
+			wBuffer[12] = (setValue&0xFF00)>>8;
+			wBuffer[13] = (char)(setValue&0x00FF);
 			
-			setValue = (int)(g_AllCar[carID].m_Load[curLoadNum-1].m_Channel[2].m_SetValue*25.5/2);
-			wBuffer[21] = (char)setValue;
-			wBuffer[29] = (char)setValue;
+			setValue = (int)(g_AllCar[carID].m_Load[curLoadNum-1].m_Channel[2].m_SetValue*2000/2);
+			wBuffer[20] = (setValue&0xFF00)>>8;
+			wBuffer[21] = (char)(setValue&0x00FF);
+			wBuffer[28] = (setValue&0xFF00)>>8;
+			wBuffer[29] = (char)(setValue&0x00FF);
 			break;
 		}
 		//四路并联
 		if (2 == g_AllCar[carID].m_Load[curLoadNum-1].m_ParaMode && 0 == g_AllCar[carID].m_Load[curLoadNum-1].m_LoadMode)
 		{
-			setValue = (int)(g_AllCar[carID].m_Load[curLoadNum-1].m_Channel[0].m_SetValue*25.5/4);
-			wBuffer[5] = (char)setValue;
-			wBuffer[13] = (char)setValue;
-			wBuffer[21] = (char)setValue;
-			wBuffer[29] = (char)setValue;
+			setValue = (int)(g_AllCar[carID].m_Load[curLoadNum-1].m_Channel[0].m_SetValue*2000/4);
+			wBuffer[4] = (setValue&0xFF00)>>8;
+			wBuffer[5] = (char)(setValue&0x00FF);
+			wBuffer[12] = (setValue&0xFF00)>>8;
+			wBuffer[13] = (char)(setValue&0x00FF);			
+			
+			wBuffer[20] = (setValue&0xFF00)>>8;
+			wBuffer[21] = (char)(setValue&0x00FF);
+			wBuffer[28] = (setValue&0xFF00)>>8;
+			wBuffer[29] = (char)(setValue&0x00FF);
+			
 			break;
 		}
 		//无并联
@@ -1015,40 +1025,44 @@ void WriteSerialPortCommand(int carID, int serialPortCommandType, int curLoadNum
 		{
 			if (0 == g_AllCar[carID].m_Load[curLoadNum-1].m_LoadMode)//恒流
 			{
-				setValue = (int)(g_AllCar[carID].m_Load[curLoadNum-1].m_Channel[0].m_SetValue*25.5);
+				setValue = (int)(g_AllCar[carID].m_Load[curLoadNum-1].m_Channel[0].m_SetValue*2000);
 			}else if (1 == g_AllCar[carID].m_Load[curLoadNum-1].m_LoadMode)//恒压
 			{
-				setValue = (int)(g_AllCar[carID].m_Load[curLoadNum-1].m_Channel[0].m_SetValue*2.55);
+				setValue = (int)(g_AllCar[carID].m_Load[curLoadNum-1].m_Channel[0].m_SetValue*200);
 			}		
-			wBuffer[5] = (char)setValue;
+			wBuffer[4] = (setValue&0xFF00)>>8;
+			wBuffer[5] = (char)(setValue&0x00FF);
+			
+			if (0 == g_AllCar[carID].m_Load[curLoadNum-1].m_LoadMode)//恒流
+			{
+				setValue = (int)(g_AllCar[carID].m_Load[curLoadNum-1].m_Channel[1].m_SetValue*2000);
+			}else if (1 == g_AllCar[carID].m_Load[curLoadNum-1].m_LoadMode)//恒压
+			{
+				setValue = (int)(g_AllCar[carID].m_Load[curLoadNum-1].m_Channel[1].m_SetValue*200);
+			}		
+			wBuffer[12] = (setValue&0xFF00)>>8;
+			wBuffer[13] = (char)(setValue&0x00FF);			
 			
 			
 			if (0 == g_AllCar[carID].m_Load[curLoadNum-1].m_LoadMode)//恒流
 			{
-				setValue = (int)(g_AllCar[carID].m_Load[curLoadNum-1].m_Channel[1].m_SetValue*25.5);
+				setValue = (int)(g_AllCar[carID].m_Load[curLoadNum-1].m_Channel[2].m_SetValue*2000);	
 			}else if (1 == g_AllCar[carID].m_Load[curLoadNum-1].m_LoadMode)//恒压
 			{
-				setValue = (int)(g_AllCar[carID].m_Load[curLoadNum-1].m_Channel[1].m_SetValue*2.55);
+				setValue = (int)(g_AllCar[carID].m_Load[curLoadNum-1].m_Channel[2].m_SetValue*200);
 			}		
-			wBuffer[13] = (char)setValue;
+			wBuffer[20] = (setValue&0xFF00)>>8;
+			wBuffer[21] = (char)(setValue&0x00FF);
 			
 			if (0 == g_AllCar[carID].m_Load[curLoadNum-1].m_LoadMode)//恒流
 			{
-				setValue = (int)(g_AllCar[carID].m_Load[curLoadNum-1].m_Channel[2].m_SetValue*25.5);	
+				setValue = (int)(g_AllCar[carID].m_Load[curLoadNum-1].m_Channel[3].m_SetValue*2000);
 			}else if (1 == g_AllCar[carID].m_Load[curLoadNum-1].m_LoadMode)//恒压
 			{
-				setValue = (int)(g_AllCar[carID].m_Load[curLoadNum-1].m_Channel[2].m_SetValue*2.55);
+				setValue = (int)(g_AllCar[carID].m_Load[curLoadNum-1].m_Channel[3].m_SetValue*200);	
 			}		
-			wBuffer[21] = (char)setValue;
-			
-			if (0 == g_AllCar[carID].m_Load[curLoadNum-1].m_LoadMode)//恒流
-			{
-				setValue = (int)(g_AllCar[carID].m_Load[curLoadNum-1].m_Channel[3].m_SetValue*25.5);
-			}else if (1 == g_AllCar[carID].m_Load[curLoadNum-1].m_LoadMode)//恒压
-			{
-				setValue = (int)(g_AllCar[carID].m_Load[curLoadNum-1].m_Channel[3].m_SetValue*2.55);	
-			}		
-			wBuffer[29] = (char)setValue;
+			wBuffer[28] = (setValue&0xFF00)>>8;
+			wBuffer[29] = (char)(setValue&0x00FF);
 		}
 		
 		break;
@@ -1366,7 +1380,7 @@ float DealWithSerialPortData_NowVoltage(int carID, int loadNum, int iChnIndex, f
 	char tmpStr[256];
 	memset(tmpStr, 0, sizeof(tmpStr));
 
-	sprintf(tmpStr,"NowVoltage(), cfg_IsDealwithRecvData:%d, carID:%d, loadNum:%d, iChnIndex:%d, nowVoltage:%f, m_ParaMode:%d, m_LoadMode:%d, m_SetValue:%f, m_SetMin:%f, m_SetMax:%f\n ", 
+/*	sprintf(tmpStr,"NowVoltage(), cfg_IsDealwithRecvData:%d, carID:%d, loadNum:%d, iChnIndex:%d, nowVoltage:%f, m_ParaMode:%d, m_LoadMode:%d, m_SetValue:%f, m_SetMin:%f, m_SetMax:%f\n ", 
 		cfg_IsDealwithRecvData,
 		carID,
 		loadNum,
@@ -1377,7 +1391,7 @@ float DealWithSerialPortData_NowVoltage(int carID, int loadNum, int iChnIndex, f
 		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetValue,
 		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMin,
 		g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_SetMax);
-	WriteLog(LEVEL_DEBUG,tmpStr);
+	WriteLog(LEVEL_DEBUG,tmpStr);*/
 	
 	if( nowVoltage == 0)
 	{
@@ -1687,8 +1701,8 @@ void	DealWithSerialPortData(int carID)
 			//对当前获取到的电压数据进行处理
 			ret = -1;
 			ret = DealWithSerialPortData_NowVoltage(carID, loadNum, iChnIndex, C);
-			sprintf(logBuf,"NowVoltage, cardID:%d, loadNum:%d, iChnIndex:%d, C:%f, ret:%f", carID, loadNum, iChnIndex, C, ret);
-			WriteLog(LEVEL_DEBUG,logBuf);
+//			sprintf(logBuf,"NowVoltage, cardID:%d, loadNum:%d, iChnIndex:%d, C:%f, ret:%f", carID, loadNum, iChnIndex, C, ret);
+//			WriteLog(LEVEL_DEBUG,logBuf);
 			if (ret == -1)
 			{
 				g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowVoltage = C;
@@ -2028,10 +2042,16 @@ void	Proc_MutilMediaTimer(int carID,DWORD dwUser)
 			pDlg->m_MutilTimer_Car16.Stop();			
 			break;
 		}
-	
+		Sleep(300);	
 		WriteSerialPortCommand(carID, LOAD_COMMAND_STOP, 64);	//下发串口命令，停止测试
 		WriteSerialPortCommand(carID, LOAD_COMMAND_STOP, 64);	//下发串口命令，停止测试
-		Sleep(10);//此命令不需要返回
+
+		Sleep(300);
+		WriteSerialPortCommand(carID, LOAD_COMMAND_STOP, 64);	//下发串口命令，停止测试
+		WriteSerialPortCommand(carID, LOAD_COMMAND_STOP, 64);	//下发串口命令，停止测试
+
+		Sleep(300);//此命令不需要返回
+		WriteSerialPortCommand(carID, LOAD_COMMAND_STOP, 64);	//下发串口命令，停止测试
 		WriteSerialPortCommand(carID, LOAD_COMMAND_STOP, 64);	//下发串口命令，停止测试
 		
 		pDlg->GetDlgItem(IDC_BUTTON_TEST)->EnableWindow(TRUE);		
