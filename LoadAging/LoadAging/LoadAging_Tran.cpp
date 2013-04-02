@@ -12,7 +12,7 @@ extern CLoadAgingApp theApp;
 CLoadAgingDlg	*pdlg;
 
 // var about LoadAging.ini
-char			cfg_SoftwareVersion[32]="V2.12";					//软件版本标识
+char			cfg_SoftwareVersion[32]="V2.20";					//软件版本标识
 char			cfg_IniName[256] = "";
 char			cfg_IniShortName[] = "\\LoadAging.ini";
 char			cfg_NormalPassword[128]={0};				//技术人员密码
@@ -228,7 +228,7 @@ void DrawCurrentCarInfo(void)
 		
 	}else
 	{
-		int	errorLoadCounter=0;	 //出错负载数
+		/*int	errorLoadCounter=0;	 //出错负载数
 		int	totalLoadCounter=g_AllCar[g_curSelTestCar].testParam.endLoadNum - g_AllCar[g_curSelTestCar].testParam.startLoadNum + 1;  //总共待测试负载数目
 		float errorPercent; 
 		for (int loadIndex=g_AllCar[g_curSelTestCar].testParam.startLoadNum; loadIndex<=g_AllCar[g_curSelTestCar].testParam.endLoadNum; loadIndex++)
@@ -239,6 +239,33 @@ void DrawCurrentCarInfo(void)
 			}
 		}
 		errorPercent = (float)errorLoadCounter/(float)totalLoadCounter*100;//不良率
+		sprintf(testResultStr, "总数:%d,合格:%d,不良:%d,不良率:%2.2f%%",
+			totalLoadCounter,totalLoadCounter-errorLoadCounter,errorLoadCounter,errorPercent);*/
+		int	errorLoadCounter=0;	 //出错产品数
+		int rightLoadCounter=0; //正确产品数
+		int	totalLoadCounter=0; //总共待测试产品数目
+		float errorPercent; 
+		for (int loadIndex=g_AllCar[g_curSelTestCar].testParam.startLoadNum; loadIndex<=g_AllCar[g_curSelTestCar].testParam.endLoadNum; loadIndex++)
+		{
+			for (int iChnIndex=0; iChnIndex < 4; iChnIndex++)
+			{
+				if(CHN_STATE_OK == g_AllCar[g_curSelTestCar].m_Load[loadIndex-1].m_Channel[iChnIndex].m_ChnState )
+				{
+					rightLoadCounter++;
+				}else if(CHN_STATE_LOWVOL == g_AllCar[g_curSelTestCar].m_Load[loadIndex-1].m_Channel[iChnIndex].m_ChnState ||
+					CHN_STATE_OVERVOL == g_AllCar[g_curSelTestCar].m_Load[loadIndex-1].m_Channel[iChnIndex].m_ChnState ||
+					CHN_STATE_LOWCUR == g_AllCar[g_curSelTestCar].m_Load[loadIndex-1].m_Channel[iChnIndex].m_ChnState ||
+					CHN_STATE_OVERCUR == g_AllCar[g_curSelTestCar].m_Load[loadIndex-1].m_Channel[iChnIndex].m_ChnState )
+				{
+					errorLoadCounter++;
+				}
+			}
+		}
+		totalLoadCounter = rightLoadCounter + errorLoadCounter;
+		if ( totalLoadCounter > 0 )
+		{
+			errorPercent = (float)errorLoadCounter/(float)totalLoadCounter*100;//不良率
+		}
 		sprintf(testResultStr, "总数:%d,合格:%d,不良:%d,不良率:%2.2f%%",
 			totalLoadCounter,totalLoadCounter-errorLoadCounter,errorLoadCounter,errorPercent);
 	}		
