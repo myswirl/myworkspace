@@ -1514,25 +1514,25 @@ void ParamEditDlg::OnButtonExport()
 			
 		}else if (pes.layerParam[iLayerFixed].loadMode==1)//CV模式,恒压
 		{
-			if (pes.layerParam[iLayerFixed].chn1Value <0 || pes.layerParam[iLayerFixed].chn1Value>100 )
+			if (pes.layerParam[iLayerFixed].chn1Value <0 || pes.layerParam[iLayerFixed].chn1Value>200 )
 			{
 				sprintf(tmpStrError,"整区设置, 通道:%d, 定值超范围!",1);
 				AfxMessageBox(tmpStrError);
 				return;
 			}
-			if (pes.layerParam[iLayerFixed].chn2Value <0 || pes.layerParam[iLayerFixed].chn2Value>100 )
+			if (pes.layerParam[iLayerFixed].chn2Value <0 || pes.layerParam[iLayerFixed].chn2Value>200 )
 			{
 				sprintf(tmpStrError,"整区设置, 通道:%d, 定值超范围!",2);
 				AfxMessageBox(tmpStrError);
 				return;
 			}
-			if (pes.layerParam[iLayerFixed].chn3Value <0 || pes.layerParam[iLayerFixed].chn3Value>100 )
+			if (pes.layerParam[iLayerFixed].chn3Value <0 || pes.layerParam[iLayerFixed].chn3Value>200 )
 			{
 				sprintf(tmpStrError,"整区设置, 通道:%d, 定值超范围!",3);
 				AfxMessageBox(tmpStrError);
 				return;
 			}
-			if (pes.layerParam[iLayerFixed].chn4Value <0 || pes.layerParam[iLayerFixed].chn4Value>100 )
+			if (pes.layerParam[iLayerFixed].chn4Value <0 || pes.layerParam[iLayerFixed].chn4Value>200 )
 			{
 				sprintf(tmpStrError,"整区设置, 通道:%d, 定值超范围!",4);
 				AfxMessageBox(tmpStrError);
