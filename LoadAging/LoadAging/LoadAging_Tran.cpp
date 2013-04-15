@@ -244,7 +244,7 @@ void DrawCurrentCarInfo(void)
 		int	errorLoadCounter=0;	 //出错产品数
 		int rightLoadCounter=0; //正确产品数
 		int	totalLoadCounter=0; //总共待测试产品数目
-		float errorPercent; 
+		float errorPercent=0; 
 		for (int loadIndex=g_AllCar[g_curSelTestCar].testParam.startLoadNum; loadIndex<=g_AllCar[g_curSelTestCar].testParam.endLoadNum; loadIndex++)
 		{
 			for (int iChnIndex=0; iChnIndex < 4; iChnIndex++)
