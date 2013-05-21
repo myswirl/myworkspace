@@ -931,7 +931,7 @@ int	GetSerialPortCommandType(int carID, int loadNum)
 		{
 			if(g_AllCar[carID].pTimeSeires[testItemIndex].recvEvt == 0)//如果未回主控板命令
 			{
-				return testItem;//时序过程中，判断是否单片机回事件，校验机制，方式主板数据丢失
+				return testItem;//时序过程中，判断是否单片机回事件，校验机制，防止主板数据丢失
 			}else
 			{
 				return 0;	
@@ -1233,7 +1233,7 @@ bool ChnTestDataCompare(int carID, int loadNum, int iChnIndex)
 	//通道状态, 错误统计			
 	if (g_AllCar[carID].m_Load[loadNum-1].m_LoadMode == LOAD_MODE_CC )//恒流
 	{	
-		if( g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowVoltage == 0 && g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowCurrent== 0)
+		if( g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowVoltage < 2 && g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowCurrent < 0.04 )
 		{			
 			if (g_AllCar[carID].m_TimeCounter>200)
 			{
@@ -1301,7 +1301,7 @@ bool ChnTestDataCompare(int carID, int loadNum, int iChnIndex)
 		}
 	}else if (g_AllCar[carID].m_Load[loadNum-1].m_LoadMode == LOAD_MODE_CV )//恒压
 	{
-		if( g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowVoltage == 0 && g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowCurrent== 0)
+		if( g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowVoltage < 2 && g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_NowCurrent < 0.04 )
 		{
 			g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_ChnState = CHN_STATE_NOLINK;//未连接
 			if (g_AllCar[carID].m_Load[loadNum-1].m_Channel[iChnIndex].m_ChnHaveBeenRight == 1)
