@@ -1404,6 +1404,11 @@ void CLoadAgingDlg::OnButtonTest()
 		g_AllCar[selTab].m_ReadEventCounter=0;
 		g_AllCar[selTab].m_LostEventTimer=0;
 		g_AllCar[selTab].m_LostReadEventCounter=0;
+		for(int testItemIndex=0;testItemIndex< g_AllCar[selTab].testItemNum; testItemIndex++)
+		{
+			g_AllCar[selTab].pTimeSeires[testItemIndex].recvEvt =0;
+		}
+		
 		memset(g_AllCar[selTab].recvData,0,SERIALPORT_BUFSIZE);//接收串口数据buffer清空
 		for(int iLoad=0;iLoad<MAX_LOAD_PERCAR;iLoad++)
 		{

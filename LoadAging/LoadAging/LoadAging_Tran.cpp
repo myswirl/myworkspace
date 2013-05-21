@@ -12,7 +12,7 @@ extern CLoadAgingApp theApp;
 CLoadAgingDlg	*pdlg;
 
 // var about LoadAging.ini
-char			cfg_SoftwareVersion[32]="V2.20";					//软件版本标识
+char			cfg_SoftwareVersion[32]="V2.21";					//软件版本标识
 char			cfg_IniName[256] = "";
 char			cfg_IniShortName[] = "\\LoadAging.ini";
 char			cfg_NormalPassword[128]={0};				//技术人员密码
