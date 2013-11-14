@@ -21,51 +21,34 @@
 #include <net/if.h>
 #include <ifaddrs.h>
 #include <arpa/inet.h>
-void getLocalIPAddress( char *s8IPAddress )
+#include <errno.h>
+int GetLocalIPAddress( char* s8CardName, char *s8IPAddress )
 {
-#ifdef WIN32
+	struct ifreq		ifr;
+	int				sock_get_ip = -1;
+	struct sockaddr_in	*ip;
 
+	sock_get_ip = socket( AF_INET, SOCK_STREAM, 0 );
 
-/*	DJ_S8     szHostname[100];
-   HOSTENT   *pHostEnt;
-    in_addr   inAddr;
-    gethostname(   szHostname,   sizeof(   szHostname   ));
-    pHostEnt   =   gethostbyname(   szHostname   );
-    memcpy(&inAddr.S_un,   pHostEnt->h_addr_list[0],   pHostEnt->h_length);
-    strcpy(s8IPAddress,inet_ntoa(inAddr));*/
-#else
-	struct ifconf	conf;
-	struct ifreq	*ifr;
-	char			buff[BUFSIZ];
-	int				num;
-	int				i;
-
-	int				s = socket( PF_INET, SOCK_DGRAM, 0 );
-	conf.ifc_len   = BUFSIZ;
-	conf.ifc_buf   = buff;
-
-	ioctl( s, SIOCGIFCONF, &conf );
-	num	   = conf.ifc_len / sizeof( struct ifreq );
-	ifr	   = conf.ifc_req;
-
-	//printf("num=%d\n",num);
-
-	for( i = 0; i < num; i++ )
+	if( sock_get_ip >= 0 )
 	{
-		struct sockaddr_in *sin = (struct sockaddr_in *)( &ifr->ifr_addr );
-
-		ioctl( s, SIOCGIFFLAGS, ifr );
-		printf("sin->sin_addr =%X\n",sin->sin_addr.s_addr);
-		if( ( ( ifr->ifr_flags & IFF_LOOPBACK ) == 0 ) && ( ifr->ifr_flags & IFF_UP ) )
+		strcpy( ifr.ifr_name, s8CardName );
+		if( ioctl( sock_get_ip, SIOCGIFADDR, &ifr ) >= 0 )
 		{
-			strcpy( s8IPAddress, inet_ntoa( sin->sin_addr ) );
-			printf("s8IPAddress=%s,sin_addr =%X \n",s8IPAddress,sin->sin_addr.s_addr);
-			break;
+			ip = (struct sockaddr_in *)&ifr.ifr_addr; //获取ipv4地址
+			strcpy( s8IPAddress, inet_ntoa( ip->sin_addr ) );
+		}else
+		{
+			printf(  "ioctl SIOCGIFADDR error!%s", strerror( errno ) );
 		}
-		ifr++;
+		close( sock_get_ip );
+	}else
+	{
+		printf(  "socket create fail...GetLocalIp!, %s", strerror( errno ) );
+		return -1;
 	}
-#endif
 }
+
 
 //根据网卡设备名称获取MAC值
 int GetMAC( char *ifa_name, char *MAC )
@@ -143,10 +126,12 @@ int main( void )
 	}
 	
 	freeifaddrs(ifAddrStruct); //一定要释放  
-
-	getLocalIPAddress( tempIP ); //获取本机IP
+while(1)
+	{
+	sleep(1);
+	GetLocalIPAddress("eth0", tempIP ); //获取本机IP
 	printf( "IP Address:%s \n", tempIP );
-
+	}
 	return 0;
 }
 
