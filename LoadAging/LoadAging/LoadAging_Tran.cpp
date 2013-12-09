@@ -8,11 +8,12 @@
 #include "SLinkList.h"
 #include "SerialPort.h"
 
+int g_ContinueNotRecvData=0;//连续没有收到串口数据时间统计，10s后停止测试给出提示；
 extern CLoadAgingApp theApp;
 CLoadAgingDlg	*pdlg;
 
 // var about LoadAging.ini
-char			cfg_SoftwareVersion[32]="V2.21";					//软件版本标识
+char			cfg_SoftwareVersion[32]="V2.22";					//软件版本标识
 char			cfg_IniName[256] = "";
 char			cfg_IniShortName[] = "\\LoadAging.ini";
 char			cfg_NormalPassword[128]={0};				//技术人员密码
@@ -43,7 +44,7 @@ CSerialPort		g_Ports[MAX_CAR_COUNT];						//串口类，处理每个测试车串口数据
 float			g_SetCurrentError=0.2;						//设置电流值偏差范围
 float			g_SetVoltageError=2.0;						//设置电压值偏差范围
 int				g_LastTimeSeriesCMD=LOAD_COMMAND_220V_ON;		//上一个时序命令，110V还是220V，决定脉冲开关的命令类型			
-int				g_ValidHour=0;								//加密狗
+int				g_ValidHour=0;								//加密狗剩余时间
 const float EPSINON	= 0.000000	;	
 
 /************************************************************************/
@@ -1848,8 +1849,17 @@ void	DealWithSerialPortData(int carID)
 	char endElem = g_AllCar[carID].recvData[38];		//结束元素
 	if (loadNum==0 && loadNum==0 && funNum==0 && startElem==0 && endElem ==0)
 	{
+		g_ContinueNotRecvData++;
+		if(g_ContinueNotRecvData > 100)//连续超过10s没有收到数据
+		{
+			g_ContinueNotRecvData=0;
+			g_AllCar[carID].m_CarState = CAR_STATE_IMPORTED;//这里要互斥
+			WriteLog(LEVEL_ERROR,"请检查串口连接,超过10s没有收到数据了!");
+			AfxMessageBox("串口通讯异常!");
+		}
 		return;//此时未收到串口数据
 	}
+	g_ContinueNotRecvData=0;//如果收到串口数据，重新统计
 	if (loadNum<0 || loadNum>=MAX_LOAD_PERCAR ||funNum > 0x18 || startElem!=cStartFlag || endElem!= cEndFlag)
 	{
 		EnterCriticalSection(&g_AllCar[g_curSelTestCar].CriticalSectionRecvBuffer);
