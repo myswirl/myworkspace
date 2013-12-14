@@ -187,7 +187,7 @@ void ParamEditDlg::OnButtonLoadparam()
 		delete lpszOpenFile;	//释放分配的对话框
 		return;
 	}
-		
+	
 	sprintf(tmpStr,"%d",readSS.layerPerCar);	//层数
 	this->SetDlgItemText(IDC_EDIT_LAYER_PERCAR,tmpStr);
 	
@@ -200,7 +200,7 @@ void ParamEditDlg::OnButtonLoadparam()
 	
 	sprintf(tmpStr,"%d",readSS.endLoadNum);
 	this->SetDlgItemText( IDC_EDIT_END_LOADNUM,tmpStr );			//扫描结束地址
-		
+	
 	sprintf(tmpStr,"%d",readSS.totalTestTime);
 	this->SetDlgItemText( IDC_EDIT_LOADTEST_TOTALTIME,tmpStr );		//总测试时间
 	
@@ -705,7 +705,7 @@ void ParamEditDlg::OnButtonLoadparam()
 	this->GetDlgItem(IDC_EDIT_LAYER0_CHN3_VALUE)->SetWindowText( tmpStr);
 	sprintf(tmpStr,"%.3f",readSS.layerParam[6].chn4Value);
 	this->GetDlgItem(IDC_EDIT_LAYER0_CHN4_VALUE)->SetWindowText( tmpStr);
-
+	
 	
 	//电压、电流上限
 	sprintf(tmpStr,"%.3f",readSS.layerParam[0].chn1Max);
@@ -785,7 +785,7 @@ void ParamEditDlg::OnButtonLoadparam()
 	this->m_Layer6.GetDlgItem(IDC_EDIT_LAYER6_CHN5_MAX)->SetWindowText( tmpStr);
 	sprintf(tmpStr,"%.3f",readSS.layerParam[5].chn6Max);
 	this->m_Layer6.GetDlgItem(IDC_EDIT_LAYER6_CHN6_MAX)->SetWindowText( tmpStr);
-
+	
 	//整区设置
 	sprintf(tmpStr,"%.3f",readSS.layerParam[6].chn1Max);
 	this->GetDlgItem(IDC_EDIT_LAYER0_CHN1_MAX)->SetWindowText( tmpStr);
@@ -795,7 +795,7 @@ void ParamEditDlg::OnButtonLoadparam()
 	this->GetDlgItem(IDC_EDIT_LAYER0_CHN3_MAX)->SetWindowText( tmpStr);
 	sprintf(tmpStr,"%.3f",readSS.layerParam[6].chn4Max);
 	this->GetDlgItem(IDC_EDIT_LAYER0_CHN4_MAX)->SetWindowText( tmpStr);
-
+	
 	
 	//电压、电流下限
 	sprintf(tmpStr,"%.3f",readSS.layerParam[0].chn1Min);
@@ -875,7 +875,7 @@ void ParamEditDlg::OnButtonLoadparam()
 	this->m_Layer6.GetDlgItem(IDC_EDIT_LAYER6_CHN5_MIN)->SetWindowText( tmpStr);
 	sprintf(tmpStr,"%.3f",readSS.layerParam[5].chn6Min);
 	this->m_Layer6.GetDlgItem(IDC_EDIT_LAYER6_CHN6_MIN)->SetWindowText( tmpStr);
-
+	
 	//整区设置
 	sprintf(tmpStr,"%.3f",readSS.layerParam[6].chn1Min);
 	this->GetDlgItem(IDC_EDIT_LAYER0_CHN1_MIN)->SetWindowText( tmpStr);
@@ -885,7 +885,7 @@ void ParamEditDlg::OnButtonLoadparam()
 	this->GetDlgItem(IDC_EDIT_LAYER0_CHN3_MIN)->SetWindowText( tmpStr);
 	sprintf(tmpStr,"%.3f",readSS.layerParam[6].chn4Min);
 	this->GetDlgItem(IDC_EDIT_LAYER0_CHN4_MIN)->SetWindowText( tmpStr);
-
+	
 	
 	//产品名称
 	sprintf(tmpStr,"%s",readSS.layerParam[0].chn1ProName);
@@ -965,7 +965,7 @@ void ParamEditDlg::OnButtonLoadparam()
 	this->m_Layer6.GetDlgItem(IDC_EDIT_LAYER6_CHN5_PRONAME)->SetWindowText( tmpStr);
 	sprintf(tmpStr,"%s",readSS.layerParam[5].chn6ProName);
 	this->m_Layer6.GetDlgItem(IDC_EDIT_LAYER6_CHN6_PRONAME)->SetWindowText( tmpStr);
-
+	
 	//整区设置	
 	sprintf(tmpStr,"%s",readSS.layerParam[6].chn1ProName);
 	this->GetDlgItem(IDC_EDIT_LAYER0_CHN1_PRONAME)->SetWindowText( tmpStr);
@@ -975,7 +975,7 @@ void ParamEditDlg::OnButtonLoadparam()
 	this->GetDlgItem(IDC_EDIT_LAYER0_CHN3_PRONAME)->SetWindowText( tmpStr);
 	sprintf(tmpStr,"%s",readSS.layerParam[6].chn4ProName);
 	this->GetDlgItem(IDC_EDIT_LAYER0_CHN4_PRONAME)->SetWindowText( tmpStr);
-
+	
 }
 /************************************************************************/
 /* 根据界面参数，导出配置文件                                           */
@@ -1785,6 +1785,207 @@ void ParamEditDlg::OnButtonExport()
 		numwritten = fwrite( &pes, sizeof( TEST_PARAM_STRUCT ), 1, pFileHandle );		
 		if (numwritten==1 )
 		{
+#if 1 //默认将编辑参数导入选中车			
+			int selTab = g_curSelTestCar;
+			int			testItemNum=0;			//时序测试项，数目，经计算得到
+			if (g_AllCar[selTab].m_CarState != CAR_STATE_TESTING) //当前车没有在测试中才可进行参数导入
+			{
+				strcpy(g_AllCar[selTab].paramFileName, szGetName);						//记录导入文件全路径名称
+				memcpy(&g_AllCar[selTab].testParam, &pes,sizeof(TEST_PARAM_STRUCT));					//导入文件参数结构体
+				//读取现有ListBox的时序,计算测试项
+				for (int i=0;i<m_ListTimeSeries.GetCount();i++)
+				{
+					CString bufStr;
+					CString csTemp[5];
+					int pulseRepeatTime;	//脉冲开关
+					m_ListTimeSeries.GetText(i,bufStr);
+					
+					AfxExtractSubString(csTemp[1], (LPCTSTR)bufStr, 1, ','); // 得到测试项
+					AfxExtractSubString(csTemp[2], (LPCTSTR)bufStr, 2, ','); // 得到开始时间,单位分
+					AfxExtractSubString(csTemp[3], (LPCTSTR)bufStr, 3, ','); // 得到测试时间,单位秒
+					if(csTemp[1] == "脉冲开关")
+					{
+						AfxExtractSubString(csTemp[4], (LPCTSTR)bufStr, 6, ','); //脉冲重复次数
+						sscanf(csTemp[4],"%d",&pulseRepeatTime);
+						testItemNum += pulseRepeatTime*2;
+						
+					}else if(csTemp[1] == "110V拉载测试")
+					{
+						testItemNum++;
+					}else if(csTemp[1] == "220V拉载测试")
+					{
+						testItemNum++;
+					}
+				}
+				
+				//防止第二次重新导入参数失败
+				g_AllCar[selTab].testItemNum=0;
+				if(g_AllCar[selTab].pTimeSeires != NULL)
+				{
+					delete []g_AllCar[selTab].pTimeSeires;
+				}
+				
+				g_AllCar[selTab].pTimeSeires = new TIMESEIRES_STRUCT[testItemNum];
+				if(g_AllCar[selTab].pTimeSeires == NULL)
+				{
+					AfxMessageBox("Error, new TIMESERIES_STRUCT fail!");
+					return;
+				}
+				
+				//读取现有ListBox的时序,填写测试项
+				for ( i=0;i<m_ListTimeSeries.GetCount();i++)
+				{
+					CString bufStr;
+					CString csTemp[7];
+					int pulseRepeatTime;		//脉冲开关
+					int timeSeriesStartTime;	//开始测试时间
+					int timeSeriesTestTime;		//测试时间
+					int pulseOnTime;
+					int pulseOffTime;
+					m_ListTimeSeries.GetText(i,bufStr);
+					
+					AfxExtractSubString(csTemp[1], (LPCTSTR)bufStr, 1, ','); // 得到测试项
+					AfxExtractSubString(csTemp[2], (LPCTSTR)bufStr, 2, ','); // 得到开始时间,单位分
+					AfxExtractSubString(csTemp[3], (LPCTSTR)bufStr, 3, ','); // 得到测试时间,单位秒
+					sscanf(csTemp[2],"%d",&timeSeriesStartTime);
+					sscanf(csTemp[3],"%d",&timeSeriesTestTime);
+					
+					if(csTemp[1] == "脉冲开关")
+					{
+						AfxExtractSubString(csTemp[4], (LPCTSTR)bufStr, 4, ','); //脉冲开时长
+						AfxExtractSubString(csTemp[5], (LPCTSTR)bufStr, 5, ','); //脉冲关时长
+						AfxExtractSubString(csTemp[6], (LPCTSTR)bufStr, 6, ','); //脉冲重复次数
+						sscanf(csTemp[4],"%d",&pulseOffTime);
+						sscanf(csTemp[5],"%d",&pulseOnTime);
+						sscanf(csTemp[6],"%d",&pulseRepeatTime);
+						for(int j=0;j<pulseRepeatTime;j++)
+						{
+							if (g_LastTimeSeriesCMD == LOAD_COMMAND_220V_ON)
+							{
+								g_AllCar[selTab].pTimeSeires[g_AllCar[selTab].testItemNum].testItem = LOAD_COMMAND_220V_OFF;
+							}else if (g_LastTimeSeriesCMD == LOAD_COMMAND_110V_ON)
+							{
+								g_AllCar[selTab].pTimeSeires[g_AllCar[selTab].testItemNum].testItem = LOAD_COMMAND_110V_OFF;
+							}
+							g_AllCar[selTab].pTimeSeires[g_AllCar[selTab].testItemNum].startTime = timeSeriesStartTime*60 + j*(pulseOnTime+pulseOffTime);
+							g_AllCar[selTab].pTimeSeires[g_AllCar[selTab].testItemNum].testTime = pulseOffTime;
+							g_AllCar[selTab].pTimeSeires[g_AllCar[selTab].testItemNum].recvEvt = 0;
+							g_AllCar[selTab].testItemNum++;
+							
+							if (g_LastTimeSeriesCMD == LOAD_COMMAND_220V_ON)
+							{
+								g_AllCar[selTab].pTimeSeires[g_AllCar[selTab].testItemNum].testItem = LOAD_COMMAND_220V_ON;
+							}else if (g_LastTimeSeriesCMD == LOAD_COMMAND_110V_ON)
+							{
+								g_AllCar[selTab].pTimeSeires[g_AllCar[selTab].testItemNum].testItem = LOAD_COMMAND_110V_ON;
+							}
+							g_AllCar[selTab].pTimeSeires[g_AllCar[selTab].testItemNum].startTime = timeSeriesStartTime*60+pulseOffTime+j*(pulseOnTime+pulseOffTime);
+							g_AllCar[selTab].pTimeSeires[g_AllCar[selTab].testItemNum].testTime = pulseOnTime;
+							g_AllCar[selTab].pTimeSeires[g_AllCar[selTab].testItemNum].recvEvt = 0;
+							g_AllCar[selTab].testItemNum++;
+						}
+						
+					}else if(csTemp[1] == "110V拉载测试")
+					{
+						g_AllCar[selTab].pTimeSeires[g_AllCar[selTab].testItemNum].testItem = LOAD_COMMAND_110V_ON;
+						g_LastTimeSeriesCMD = LOAD_COMMAND_110V_ON;
+						g_AllCar[selTab].pTimeSeires[g_AllCar[selTab].testItemNum].startTime = timeSeriesStartTime*60;
+						g_AllCar[selTab].pTimeSeires[g_AllCar[selTab].testItemNum].testTime = timeSeriesTestTime;
+						g_AllCar[selTab].pTimeSeires[g_AllCar[selTab].testItemNum].recvEvt = 0;
+						g_AllCar[selTab].testItemNum++;
+					}else if(csTemp[1] == "220V拉载测试")
+					{
+						g_AllCar[selTab].pTimeSeires[g_AllCar[selTab].testItemNum].testItem = LOAD_COMMAND_220V_ON;
+						g_LastTimeSeriesCMD = LOAD_COMMAND_220V_ON;
+						g_AllCar[selTab].pTimeSeires[g_AllCar[selTab].testItemNum].startTime = timeSeriesStartTime*60;
+						g_AllCar[selTab].pTimeSeires[g_AllCar[selTab].testItemNum].testTime = timeSeriesTestTime;
+						g_AllCar[selTab].pTimeSeires[g_AllCar[selTab].testItemNum].recvEvt = 0;
+						g_AllCar[selTab].testItemNum++;
+					}
+				}
+				
+				//全局负载，
+				for (int loadIndex=pes.startLoadNum; loadIndex<=pes.endLoadNum; loadIndex++)
+				{
+					g_AllCar[selTab].m_Load[loadIndex-1].m_LayerID = (loadIndex-1)/pes.loadPerLayer+1;//所属层数计算
+					g_AllCar[selTab].m_Load[loadIndex-1].m_LoadState = LOAD_STATE_SELECT;		//更改负载状态为选中				
+				}
+				
+				//根据通道测试参数对全局结构体进行设置
+				if (pes.paramSetMode == 0)//整区设置
+				{
+					for (int loadIndex=pes.startLoadNum; loadIndex<=pes.endLoadNum; loadIndex++)
+					{
+						g_AllCar[selTab].m_Load[loadIndex-1].m_LoadMode = pes.layerParam[6].loadMode;//第7层参数赋值给每个通道
+						g_AllCar[selTab].m_Load[loadIndex-1].m_ParaMode = pes.layerParam[6].paraMode;//第7层参数赋值给每个通道
+						g_AllCar[selTab].m_Load[loadIndex-1].m_Channel[0].m_SetValue=pes.layerParam[6].chn1Value;
+						g_AllCar[selTab].m_Load[loadIndex-1].m_Channel[0].m_SetMax=pes.layerParam[6].chn1Max;
+						g_AllCar[selTab].m_Load[loadIndex-1].m_Channel[0].m_SetMin=pes.layerParam[6].chn1Min;
+						strcpy(g_AllCar[selTab].m_Load[loadIndex-1].m_Channel[0].m_SetProName,pes.layerParam[6].chn1ProName);
+						
+						g_AllCar[selTab].m_Load[loadIndex-1].m_Channel[1].m_SetValue=pes.layerParam[6].chn2Value;
+						g_AllCar[selTab].m_Load[loadIndex-1].m_Channel[1].m_SetMax=pes.layerParam[6].chn2Max;
+						g_AllCar[selTab].m_Load[loadIndex-1].m_Channel[1].m_SetMin=pes.layerParam[6].chn2Min;
+						strcpy(g_AllCar[selTab].m_Load[loadIndex-1].m_Channel[1].m_SetProName,pes.layerParam[6].chn2ProName);
+						
+						g_AllCar[selTab].m_Load[loadIndex-1].m_Channel[2].m_SetValue=pes.layerParam[6].chn3Value;
+						g_AllCar[selTab].m_Load[loadIndex-1].m_Channel[2].m_SetMax=pes.layerParam[6].chn3Max;
+						g_AllCar[selTab].m_Load[loadIndex-1].m_Channel[2].m_SetMin=pes.layerParam[6].chn3Min;
+						strcpy(g_AllCar[selTab].m_Load[loadIndex-1].m_Channel[2].m_SetProName,pes.layerParam[6].chn3ProName);
+						
+						g_AllCar[selTab].m_Load[loadIndex-1].m_Channel[3].m_SetValue=pes.layerParam[6].chn4Value;
+						g_AllCar[selTab].m_Load[loadIndex-1].m_Channel[3].m_SetMax=pes.layerParam[6].chn4Max;
+						g_AllCar[selTab].m_Load[loadIndex-1].m_Channel[3].m_SetMin=pes.layerParam[6].chn4Min;
+						strcpy(g_AllCar[selTab].m_Load[loadIndex-1].m_Channel[3].m_SetProName,pes.layerParam[6].chn4ProName);
+						
+					}
+					
+				}else if (pes.paramSetMode == 1)//分层设置
+				{
+					for (int loadIndex=pes.startLoadNum; loadIndex<=pes.endLoadNum; loadIndex++)//全局负载参数设置，根据全局负载所属的层，分别对通道参数赋值
+					{
+						int layerID = g_AllCar[selTab].m_Load[loadIndex-1].m_LayerID-1;//属于哪一层
+						
+						g_AllCar[selTab].m_Load[loadIndex-1].m_LoadMode = pes.layerParam[layerID].loadMode;
+						g_AllCar[selTab].m_Load[loadIndex-1].m_ParaMode = pes.layerParam[layerID].paraMode;
+						g_AllCar[selTab].m_Load[loadIndex-1].m_Channel[0].m_SetValue=pes.layerParam[layerID].chn1Value;
+						g_AllCar[selTab].m_Load[loadIndex-1].m_Channel[0].m_SetMax=pes.layerParam[layerID].chn1Max;
+						g_AllCar[selTab].m_Load[loadIndex-1].m_Channel[0].m_SetMin=pes.layerParam[layerID].chn1Min;
+						strcpy(g_AllCar[selTab].m_Load[loadIndex-1].m_Channel[0].m_SetProName,pes.layerParam[layerID].chn1ProName);
+						
+						g_AllCar[selTab].m_Load[loadIndex-1].m_Channel[1].m_SetValue=pes.layerParam[layerID].chn2Value;
+						g_AllCar[selTab].m_Load[loadIndex-1].m_Channel[1].m_SetMax=pes.layerParam[layerID].chn2Max;
+						g_AllCar[selTab].m_Load[loadIndex-1].m_Channel[1].m_SetMin=pes.layerParam[layerID].chn2Min;
+						strcpy(g_AllCar[selTab].m_Load[loadIndex-1].m_Channel[1].m_SetProName,pes.layerParam[layerID].chn2ProName);
+						
+						g_AllCar[selTab].m_Load[loadIndex-1].m_Channel[2].m_SetValue=pes.layerParam[layerID].chn3Value;
+						g_AllCar[selTab].m_Load[loadIndex-1].m_Channel[2].m_SetMax=pes.layerParam[layerID].chn3Max;
+						g_AllCar[selTab].m_Load[loadIndex-1].m_Channel[2].m_SetMin=pes.layerParam[layerID].chn3Min;
+						strcpy(g_AllCar[selTab].m_Load[loadIndex-1].m_Channel[2].m_SetProName,pes.layerParam[layerID].chn3ProName);
+						
+						g_AllCar[selTab].m_Load[loadIndex-1].m_Channel[3].m_SetValue=pes.layerParam[layerID].chn4Value;
+						g_AllCar[selTab].m_Load[loadIndex-1].m_Channel[3].m_SetMax=pes.layerParam[layerID].chn4Max;
+						g_AllCar[selTab].m_Load[loadIndex-1].m_Channel[3].m_SetMin=pes.layerParam[layerID].chn4Min;
+						strcpy(g_AllCar[selTab].m_Load[loadIndex-1].m_Channel[3].m_SetProName,pes.layerParam[layerID].chn4ProName);
+						
+					}
+					
+				}
+				for (int loadInde=pes.startLoadNum; loadInde<=pes.endLoadNum; loadInde++)//全局负载参数设置，根据全局负载所属的层，分别对通道参数赋值
+				{
+					if(g_AllCar[selTab].m_Load[loadInde-1].m_ParaMode != 0)
+					{
+						AfxMessageBox("两路并联:请将1和2相连,3和4相连;\n四路并联:请将1、2、3、4相连;");
+						break;
+					}
+				}
+				
+				//测试车状态更改为
+				g_AllCar[selTab].m_CarState = CAR_STATE_IMPORTED;	
+				g_curImportCar=selTab;
+				
+			}
+#endif			
 			//AfxMessageBox("OK");			
 		}		
 		fclose(pFileHandle); 

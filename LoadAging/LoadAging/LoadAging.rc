@@ -514,7 +514,7 @@ BEGIN
     CONTROL         "Tab1",IDC_TAB_PARAMEDIT,"SysTabControl32",NOT 
                     WS_VISIBLE,13,65,218,130
     PUSHBUTTON      "载入",IDC_BUTTON_LOADPARAM,330,221,40,16
-    PUSHBUTTON      "导出",IDC_BUTTON_EXPORT,240,221,40,16
+    PUSHBUTTON      "保存",IDC_BUTTON_EXPORT,240,221,40,16
     PUSHBUTTON      "清空",IDC_BUTTON_CLEARPARAM,390,186,40,16,NOT 
                     WS_VISIBLE
     LTEXT           "单位:电流(A),电压(V)\n两路并联:请将1和2相连,3和4相连;\n四路并联:请将1、2、3、4相连;",
