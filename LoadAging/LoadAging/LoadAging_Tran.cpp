@@ -1847,7 +1847,9 @@ void	DealWithSerialPortData(int carID)
 	int loadNum = g_AllCar[carID].recvData[1];			//负载号
 	int funNum = g_AllCar[carID].recvData[2];			//功能码
 	char endElem = g_AllCar[carID].recvData[38];		//结束元素
-	if (loadNum==0 && loadNum==0 && funNum==0 && startElem==0 && endElem ==0)
+
+//2013年12月18日15:08:16,on off的时候没有串口数据, 此时此判断有问题,连续超过10s没有收到数据停止测试
+/*	if (loadNum==0 && loadNum==0 && funNum==0 && startElem==0 && endElem ==0)
 	{
 		g_ContinueNotRecvData[carID]++;
 		if(g_ContinueNotRecvData[carID] > 100)//连续超过10s没有收到数据
@@ -1860,7 +1862,9 @@ void	DealWithSerialPortData(int carID)
 		}
 		return;//此时未收到串口数据
 	}
+	
 	g_ContinueNotRecvData[carID]=0;//如果收到串口数据，重新统计
+*/
 	if (loadNum<0 || loadNum>=MAX_LOAD_PERCAR ||funNum > 0x18 || startElem!=cStartFlag || endElem!= cEndFlag)
 	{
 		EnterCriticalSection(&g_AllCar[g_curSelTestCar].CriticalSectionRecvBuffer);
@@ -2218,9 +2222,6 @@ void	Proc_MutilMediaTimer(int carID,DWORD dwUser)
 	
 	memset(tmpStr,0,sizeof(tmpStr));
 	memset(logBuf,0,sizeof(logBuf));
-	
-	
-	
 	
 	//分析串口数据
 	DealWithSerialPortData(carID);

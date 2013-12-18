@@ -48,6 +48,7 @@ END_MESSAGE_MAP()
 
 void LongDlg::OnOK() 
 {
+	char logbuf[128]={0};
 	CString password;
 	
 	GetDlgItemText(IDC_EDIT_PASSWORD,password);	//获取密码
@@ -57,7 +58,8 @@ void LongDlg::OnOK()
 		if (strcmp(password, cfg_SuperPassword) == 0)
 		{
 			g_LoginCheckOK = 0;
-			WriteLog(LEVEL_DEBUG,"登陆系统, 权限:工程师");
+			sprintf(logbuf, "%s-%s, 登陆系统, 权限:工程师", cfg_Title, cfg_SoftwareVersion);
+			WriteLog(LEVEL_INFO,logbuf);
 			CDialog::OnOK();	
 		}
 		break;
@@ -65,7 +67,8 @@ void LongDlg::OnOK()
 		if (strcmp(password, cfg_NormalPassword) == 0)
 		{
 			g_LoginCheckOK = 1;
-			WriteLog(LEVEL_DEBUG,"登陆系统, 权限:技术员");
+			sprintf(logbuf, "%s-%s, 登陆系统, 权限:技术员", cfg_Title, cfg_SoftwareVersion);
+			WriteLog(LEVEL_INFO,logbuf);
 			CDialog::OnOK();
 		}
 		break;

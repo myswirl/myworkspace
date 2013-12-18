@@ -232,7 +232,7 @@ typedef	struct
 	unsigned long m_ErrorCounter;			//错误统计，欠压，欠流，过压，过流
 	unsigned long m_ReadCommandCounter;		//所有下发的串口读取命令统计
 	unsigned long m_ReadEventCounter;		//串口Read事件统计
-	unsigned long m_LostReadEventCounter;		//丢失串口数据统计
+	unsigned long m_LostReadEventCounter;	//丢失串口数据统计
 	long          iTestStartTime;			//起始测试时间
 	
 	LOAD_STRUCT m_Load[MAX_LOAD_PERCAR];	//每台测试车，最多63个负载模块，协议中64为广播命令
@@ -248,7 +248,7 @@ typedef	struct
 
 //全局变量声明------------------------------------------------
 extern long		g_SystemRunTimeCounter;					//系统运行时间计数器，用于加密
-extern char		g_softwareVersion[16];					//软件版本标识
+extern char		cfg_SoftwareVersion[32];					//软件版本标识
 extern char		cfg_NormalPassword[128];				//技术人员密码
 extern char		cfg_SuperPassword[128];					//工程师密码
 extern char		cfg_DataRecordPath[256];				//数据保存路径
