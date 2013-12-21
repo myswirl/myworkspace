@@ -59,6 +59,9 @@ enum LOAD_STATE
 	LOAD_STATE_NOSETPARAM	= 0x03,		//未设置参数，需要重新设置参数，灰色
 	LOAD_STATE_WORKING		= 0x04,		//工作中，此种状态可实时获取数据
 	LOAD_STATE_PROTECT		= 0x05,		//温度过高，系统处于保护状态，此时拉载停止
+	LOAD_STATE_PULSEON		= 0x06,		//脉冲开
+	LOAD_STATE_PULSEOFF		= 0x07,		//脉冲关
+
 };
 
 //负载模式，界面设置的
@@ -92,6 +95,7 @@ enum TESTING_CAR_STATE
 	CAR_STATE_IMPORTED	 = 0x01,	//已经导入测试参数
 	CAR_STATE_TESTING	 = 0x02,	//测试中
 	CAR_STATE_TESTFINISH = 0x03,	//测试完成
+
 };
 
 //测试中状态
