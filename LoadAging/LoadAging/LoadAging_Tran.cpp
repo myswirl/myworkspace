@@ -12,7 +12,7 @@ extern CLoadAgingApp theApp;
 CLoadAgingDlg	*pdlg;
 
 // var about LoadAging.ini
-char			cfg_SoftwareVersion[32]="V2.29";					//软件版本标识
+char			cfg_SoftwareVersion[32]="V2.30";					//软件版本标识
 char			cfg_IniName[256] = "";
 char			cfg_IniShortName[] = "\\LoadAging.ini";
 char			cfg_NormalPassword[128]={0};				//技术人员密码
@@ -502,7 +502,7 @@ void	ProcessReceiveData( unsigned char* pRecvData, int portNo)
 /************************************************************************/
 void RefreshOneLED( int curCarID, int loadIndex, int chnIndex)
 {
-	CWnd*   pW;
+/*	CWnd*   pW;
 	char	tmpStr[256];
 	int		iPerLayer=0;//当前层的第几个负载
 	
@@ -652,8 +652,8 @@ void RefreshOneLED( int curCarID, int loadIndex, int chnIndex)
 		
 		//刷新提示框
 		pW=pdlg->GetDlgItem(1400+1+iLedIndex);
-		pdlg->m_tooltip.AddTool(pW,tmpStr); 	
-		
+//		pdlg->m_tooltip.AddTool(pW,tmpStr); 	
+*/		
 }
 /************************************************************************/
 /* 刷新当前测试车的LED灯，curCarID范围[0,15]                            */
@@ -703,7 +703,6 @@ void RefreshAllLED( int curCarID)
 			}
 			switch (g_AllCar[curCarID].m_Load[loadIndex].m_LoadState)
 			{
-
 			case LOAD_STATE_SELECT:		//已经选中，黄色
 				pdlg->m_LED[iLedIndex].SetOnFgColor(g_ColorSelect);
 				sprintf(tmpStr,"位置:第%d层第%d个, 拨码:%d, 通道:%d \n状态:已选中\n设定:%s,%0.3f%s, %0.3f%s~%0.3f%s\n实时:功率= \n电流= , 电压=",
@@ -834,50 +833,21 @@ void RefreshAllLED( int curCarID)
 					Led_GetUnitName(g_AllCar[curCarID].m_Load[loadIndex].m_LoadMode)
 					);
 				break;
-			case LOAD_STATE_PULSEON:	//脉冲开
-				pdlg->m_LED[iLedIndex].SetOnFgColor(g_ColorGreen);
-				sprintf(tmpStr,"位置:第%d层第%d个, 拨码:%d, 通道:%d \n状态:脉冲开\n设定:%s,%0.3f%s, %0.3f%s~%0.3f%s\n实时:功率= \n电流= , 电压=",
-					g_AllCar[curCarID].m_Load[loadIndex].m_LayerID,
-					iPerLayer,
-					loadIndex+1,
-					chnIndex+1,
-					Led_GetLoadModeName(g_AllCar[curCarID].m_Load[loadIndex].m_LoadMode),
-					g_AllCar[curCarID].m_Load[loadIndex].m_Channel[chnIndex].m_SetValue,
-					Led_GetFixedValue(g_AllCar[curCarID].m_Load[loadIndex].m_LoadMode),
-					g_AllCar[curCarID].m_Load[loadIndex].m_Channel[chnIndex].m_SetMin,
-					Led_GetUnitName(g_AllCar[curCarID].m_Load[loadIndex].m_LoadMode),
-					g_AllCar[curCarID].m_Load[loadIndex].m_Channel[chnIndex].m_SetMax,
-					Led_GetUnitName(g_AllCar[curCarID].m_Load[loadIndex].m_LoadMode)
-					);
-				break;
-			case LOAD_STATE_PULSEOFF:	//脉冲关
-				pdlg->m_LED[iLedIndex].SetOnFgColor(g_ColorBlack);
-				sprintf(tmpStr,"位置:第%d层第%d个, 拨码:%d, 通道:%d \n状态:脉冲关\n设定:%s,%0.3f%s, %0.3f%s~%0.3f%s\n实时:功率= \n电流= , 电压=",
-					g_AllCar[curCarID].m_Load[loadIndex].m_LayerID,
-					iPerLayer,
-					loadIndex+1,
-					chnIndex+1,
-					Led_GetLoadModeName(g_AllCar[curCarID].m_Load[loadIndex].m_LoadMode),
-					g_AllCar[curCarID].m_Load[loadIndex].m_Channel[chnIndex].m_SetValue,
-					Led_GetFixedValue(g_AllCar[curCarID].m_Load[loadIndex].m_LoadMode),
-					g_AllCar[curCarID].m_Load[loadIndex].m_Channel[chnIndex].m_SetMin,
-					Led_GetUnitName(g_AllCar[curCarID].m_Load[loadIndex].m_LoadMode),
-					g_AllCar[curCarID].m_Load[loadIndex].m_Channel[chnIndex].m_SetMax,
-					Led_GetUnitName(g_AllCar[curCarID].m_Load[loadIndex].m_LoadMode)
-					);
-				break;
 				
 			}
 			//刷新提示框
 			pW=pdlg->GetDlgItem(1400+1+iLedIndex);
-			pdlg->m_tooltip.AddTool(pW,tmpStr); 		
+		//	pdlg->m_tooltip.AddTool(pW,tmpStr); 	
+			pdlg->m_tooltip.UpdateTipText(tmpStr,pW );
+
 		}else
 		{
 			pdlg->m_LED[iLedIndex].SetOnFgColor(g_ColorNotSelect);
 			sprintf(tmpStr,"位置:%d,  状态:未选中\n设定\n实时:功率= \n电流= , 电压=",iLedIndex+1);
 			//刷新提示框
 			pW=pdlg->GetDlgItem(1400+1+iLedIndex);
-			pdlg->m_tooltip.AddTool(pW,tmpStr); 
+		//	pdlg->m_tooltip.AddTool(pW,tmpStr); 
+			pdlg->m_tooltip.UpdateTipText(tmpStr,pW );
 			
 		}
 	}
@@ -2382,19 +2352,6 @@ void	Proc_MutilMediaTimer(int carID,DWORD dwUser)
 		//测试流程，下发命令
 		curLoadNum = GetCurLoadNum(carID);										//获取当前待测试负载号
 		serialPortCommandType = GetSerialPortCommandType(carID,curLoadNum);		//当前测试车，当前测试负载，获取应下发命令类型
-		if (serialPortCommandType == LOAD_COMMAND_110V_OFF || serialPortCommandType == LOAD_COMMAND_220V_OFF)
-		{
-			for(int iLoad=g_AllCar[carID].testParam.startLoadNum-1; iLoad<g_AllCar[carID].testParam.endLoadNum; iLoad++)
-			{
-				g_AllCar[carID].m_Load[iLoad].m_LoadState = LOAD_STATE_PULSEOFF;		//更改负载状态为 脉冲关				
-			}
-		}else if (serialPortCommandType == LOAD_COMMAND_110V_ON || serialPortCommandType == LOAD_COMMAND_220V_ON)
-		{
-			for(int iLoad=g_AllCar[carID].testParam.startLoadNum-1; iLoad<g_AllCar[carID].testParam.endLoadNum; iLoad++)
-			{
-				g_AllCar[carID].m_Load[iLoad].m_LoadState = LOAD_STATE_PULSEON;		//更改负载状态为 脉冲开				
-			}
-		}
 		WriteSerialPortCommand(carID, serialPortCommandType, curLoadNum);		//下发串口命令
 	}
 	

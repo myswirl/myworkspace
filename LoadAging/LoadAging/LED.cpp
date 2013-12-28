@@ -38,7 +38,7 @@ CLED::CLED()
 CLED::~CLED()
 {	
 	delete m_brOffFG;	
-	delete m_brOnFG;	
+	delete m_brOnFG;
 }
 
 BEGIN_MESSAGE_MAP(CLED, CStatic)
