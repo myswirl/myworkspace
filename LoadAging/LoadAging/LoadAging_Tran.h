@@ -15,7 +15,7 @@
 #define		SERIALPORT_BUFSIZE				39			//串口写数据大小
 #define		SERIALPORT_BUFSIZE				39			//串口写数据大小
 #define		MAX_LED_COUNT					240			//最多LED灯个数
-#define		SYS_CHECK_DOG					1		//1:进行加密狗校验; 0:不校验
+#define		SYS_CHECK_DOG					0		//1:进行加密狗校验; 0:不校验
 //系统定时器ID
 #define		TIMER_SYSRUN		100						//系统定时器，统计系统运行时间，每秒钟1次
 #define		TIMER_CAR_1			101						//老化车1，定时器ID

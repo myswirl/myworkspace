@@ -12,7 +12,7 @@ extern CLoadAgingApp theApp;
 CLoadAgingDlg	*pdlg;
 
 // var about LoadAging.ini
-char			cfg_SoftwareVersion[32]="V2.28";					//软件版本标识
+char			cfg_SoftwareVersion[32]="V2.30";					//软件版本标识
 char			cfg_IniName[256] = "";
 char			cfg_IniShortName[] = "\\LoadAging.ini";
 char			cfg_NormalPassword[128]={0};				//技术人员密码
@@ -502,7 +502,7 @@ void	ProcessReceiveData( unsigned char* pRecvData, int portNo)
 /************************************************************************/
 void RefreshOneLED( int curCarID, int loadIndex, int chnIndex)
 {
-	CWnd*   pW;
+/*	CWnd*   pW;
 	char	tmpStr[256];
 	int		iPerLayer=0;//当前层的第几个负载
 	
@@ -652,8 +652,8 @@ void RefreshOneLED( int curCarID, int loadIndex, int chnIndex)
 		
 		//刷新提示框
 		pW=pdlg->GetDlgItem(1400+1+iLedIndex);
-		pdlg->m_tooltip.AddTool(pW,tmpStr); 	
-		
+//		pdlg->m_tooltip.AddTool(pW,tmpStr); 	
+*/		
 }
 /************************************************************************/
 /* 刷新当前测试车的LED灯，curCarID范围[0,15]                            */
@@ -837,14 +837,17 @@ void RefreshAllLED( int curCarID)
 			}
 			//刷新提示框
 			pW=pdlg->GetDlgItem(1400+1+iLedIndex);
-			pdlg->m_tooltip.AddTool(pW,tmpStr); 		
+		//	pdlg->m_tooltip.AddTool(pW,tmpStr); 	
+			pdlg->m_tooltip.UpdateTipText(tmpStr,pW );
+
 		}else
 		{
 			pdlg->m_LED[iLedIndex].SetOnFgColor(g_ColorNotSelect);
 			sprintf(tmpStr,"位置:%d,  状态:未选中\n设定\n实时:功率= \n电流= , 电压=",iLedIndex+1);
 			//刷新提示框
 			pW=pdlg->GetDlgItem(1400+1+iLedIndex);
-			pdlg->m_tooltip.AddTool(pW,tmpStr); 
+		//	pdlg->m_tooltip.AddTool(pW,tmpStr); 
+			pdlg->m_tooltip.UpdateTipText(tmpStr,pW );
 			
 		}
 	}
